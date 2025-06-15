@@ -92,6 +92,92 @@ app.use((req, res, next) => {
   next();
 });
 
+
+
+
+// -----------------Commen--ROUTES---------------------------------
+//get to render home page Start #base page
+app.get("/", async (req, res) => {
+  const starredMedia = await Media.find({ starred: true }).sort({ uploadedAt: -1 });
+  res.render('home/home.ejs', { starredMedia });
+});
+//get to render home page End
+
+//get to render services page Start
+app.get("/services", (req, res) => {
+  res.render("service/service.ejs");
+});
+//get to render services page End
+
+//get to render booking page Start
+app.get("/booking", isLoggedIn, (req, res) => {
+  res.render("booking/booking.ejs");
+});
+//get to render booking page End
+
+
+//get to render contact page Start
+app.get("/contact", (req, res) => {
+  res.render("contact/contact.ejs");
+});
+//get to render contact page End
+
+//post to send contact form data Start
+app.post("/contact", async (req, res) => {
+  const { FirstName, Email, PhoneNumber, TextArea } = req.body;
+  // Nodemailer setup
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.GMAIL_USER, // Replace with your email
+      pass: process.env.GMAIL_PASS, // Replace with your email password or app password
+    },
+  });
+  const mailOptions = {
+    from: Email,
+    to: "pranavpatil020389@gmail.com", // Admin email
+    subject: `New Contact Form Submission from VH Events by ${FirstName}`,
+    text: `
+          First Name: ${FirstName}
+          Email: ${Email}
+          Phone Number: ${PhoneNumber}
+          Query: ${TextArea}
+      `,
+  };
+  // Send email
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Error sending email");
+    }
+    // console.log('Email sent: ' + info.response);
+    res.flash("success", "Email sent successfully!").redirect("/contact"); // Redirect to contact page with success message('Form submitted successfully!');
+  });
+});
+//post to send contact form data End
+
+//get to render PROFILE page Start
+app.get("/profile", isLoggedIn, async (req, res) => {
+  const bookings = await Booking.find({ user: req.user._id });
+  res.render("profile/profile.ejs", { bookings });
+});
+//get to render PROFILE page End
+
+app.get('/gallery', async (req, res) => {
+  const media = await Media.find().sort({ uploadedAt: -1 });
+  res.render('gallery/gallery.ejs', { media });
+});
+
+
+
+
+
+
+
+
+
+// -------------------newsletter----------------------------------
+
 // Newsletter email saving route Start
 app.post("/newsletter", async (req, res) => {
   const newsletterEmail = req.body.newsletteremail;
@@ -143,51 +229,12 @@ app.delete("/newsletter/:id", async (req, res) => {
 
 
 
-//get to render services page Start
-app.get("/services", (req, res) => {
-  res.render("service/service.ejs");
-});
-//get to render services page End
 
-//get to render contact page Start
-app.get("/contact", (req, res) => {
-  res.render("contact/contact.ejs");
-});
-//get to render contact page End
 
-//post to send contact form data Start
-app.post("/contact", async (req, res) => {
-  const { FirstName, Email, PhoneNumber, TextArea } = req.body;
-  // Nodemailer setup
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.GMAIL_USER, // Replace with your email
-      pass: process.env.GMAIL_PASS, // Replace with your email password or app password
-    },
-  });
-  const mailOptions = {
-    from: Email,
-    to: "pranavpatil020389@gmail.com", // Admin email
-    subject: `New Contact Form Submission from VH Events by ${FirstName}`,
-    text: `
-          First Name: ${FirstName}
-          Email: ${Email}
-          Phone Number: ${PhoneNumber}
-          Query: ${TextArea}
-      `,
-  };
-  // Send email
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log(error);
-      return res.status(500).send("Error sending email");
-    }
-    // console.log('Email sent: ' + info.response);
-    res.flash("success", "Email sent successfully!").redirect("/contact"); // Redirect to contact page with success message('Form submitted successfully!');
-  });
-});
-//post to send contact form data End
+
+
+
+// -------------------LOGIN - SIGNUP---------------------------------
 
 //get to render login page Start
 app.get("/login", (req, res) => {
@@ -250,26 +297,10 @@ app.get("/logout", (req, res, next) => {
   });
 });
 
-//get to render PROFILE page Start
-app.get("/profile", isLoggedIn, async (req, res) => {
-  const bookings = await Booking.find({ user: req.user._id });
-  res.render("profile/profile.ejs", { bookings });
-});
-//get to render PROFILE page End
 
-//get to render home page Start #base page
-app.get("/", async (req, res) => {
-  const starredMedia = await Media.find({ starred: true }).sort({ uploadedAt: -1 });
-  res.render('home/home.ejs', { starredMedia });
-});
-//get to render home page End
 
-//get to render booking page Start
-app.get("/booking", isLoggedIn, (req, res) => {
-  res.render("booking/booking.ejs");
-});
-//get to render booking page End
 
+// --------------------------booking---------------------------------
 //post to save booking info Start
 app.post("/booking", isLoggedIn, async (req, res) => {
   try {
@@ -293,7 +324,7 @@ app.post("/booking", isLoggedIn, async (req, res) => {
 });
 //post to save booking info End
 
-//derlete booking Start
+//delete booking Start
 app.delete("/booking/:id", isLoggedIn, isBookingOwner, async (req, res) => {
   try {
     // Find the booking to get details for the email
@@ -312,16 +343,15 @@ app.delete("/booking/:id", isLoggedIn, isBookingOwner, async (req, res) => {
       from: process.env.GMAIL_USER,
       to: "admin@example.com", // Replace with your admin email
       subject: `Booking Cancelled - VH Events`,
-      text: `
-A booking has been cancelled.
+      text: `A booking has been cancelled.
 
-Client Name: ${booking.fullName}
-Email: ${booking.email}
-Phone: ${booking.phone}
-Event Type: ${booking.eventType}
-Venue Type: ${booking.venueType}
-Venue Location: ${booking.venueLocation}
-Consultation Date: ${booking.consultationDate
+                Client Name: ${booking.fullName}
+                Email: ${booking.email}
+                Phone: ${booking.phone}
+                Event Type: ${booking.eventType}
+                Venue Type: ${booking.venueType}
+                Venue Location: ${booking.venueLocation}
+                Consultation Date: ${booking.consultationDate
           ? booking.consultationDate.toDateString()
           : "Not specified"
         }
@@ -348,10 +378,23 @@ Consultation Date: ${booking.consultationDate
 });
 //derlete booking End
 
+
+
+
+
+
+
+
+
+
+
+
+// -------------------ADMIN---------------------------------
+
+
 app.get("/admin", isLoggedIn, isAdmin, (req, res) => {
   res.render("admin/admin.ejs");
 });
-
 
 app.get("/admin/bookings", isLoggedIn, isAdmin, async (req, res) => {
   try {
@@ -375,7 +418,6 @@ app.post("/admin/bookings/:id/note", isLoggedIn, isAdmin, async (req, res) => {
   }
 });
 
-
 app.get("/admin/newsletters", isLoggedIn, isAdmin, async (req, res) => {
   try {
     const newsletters = await newsletterRouter.find({});
@@ -386,17 +428,10 @@ app.get("/admin/newsletters", isLoggedIn, isAdmin, async (req, res) => {
   }
 });
 
-
 app.post("/admin/newsletters", isLoggedIn, isAdmin, async (req, res) => {
-
   const { subject, message } = req.body;
-  console.log("subject - ", subject);
-  console.log("message - ", message);
     const newsletters = await newsletterRouter.find({});
-    // console.log("newsletters - ", newsletters);
-
   try {
-
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -404,7 +439,6 @@ app.post("/admin/newsletters", isLoggedIn, isAdmin, async (req, res) => {
         pass: process.env.GMAIL_PASS,
       },
     });
-
     for (const newsletter of newsletters) {
       const mailOptions = {
         from: process.env.GMAIL_USER,
@@ -462,10 +496,7 @@ app.post('/admin/gallery/star/:id', isLoggedIn, isAdmin, async (req, res) => {
   res.redirect('/admin/gallery/upload');
 });
 
-app.get('/gallery', async (req, res) => {
-  const media = await Media.find().sort({ uploadedAt: -1 });
-  res.render('gallery/gallery.ejs', { media });
-});
+
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
