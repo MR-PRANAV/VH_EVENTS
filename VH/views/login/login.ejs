@@ -1,0 +1,78 @@
+<% layout('/layouts/boilerplate') %>
+<body>
+  <div class="l-container">
+    <div class="wrapper">
+      <div class="title-text">
+        <div class="title login">We Are Hear</div>
+        <div class="title signup">Join Us</div>
+      </div>
+      <div class="form-container">
+        <div class="slide-controls">
+          <input type="radio" name="slide" id="login" checked>
+          <input type="radio" name="slide" id="signup">
+          <label for="login" class="slide login">Login</label>
+          <label for="signup" class="slide signup">Signup</label>
+          <div class="slider-tab"></div>
+        </div>
+        <div class="form-inner">
+          <!-- Login Form -->
+          <form action="/login" method="POST" class="login" novalidate>
+            <div class="field">
+              <input type="text" name="email" placeholder="Email Address" required>
+              <div class="error-msg"></div>
+            </div>
+            <div class="field">
+              <input type="password" name="password" placeholder="Password" required>
+              <span class="password-toggle" onclick="togglePassword(this)">👁️</span>
+              <div class="error-msg"></div>
+            </div>
+            <div class="field btn">
+              <div class="btn-layer"></div>
+              <input type="submit" value="Login">
+            </div>
+            <div class="signup-link">Not a member? <a href="#">Signup now</a></div>
+          </form>
+
+          <!-- Signup Form -->
+          <form action="/register" method="POST" class="signup" novalidate>
+            <div class="field">
+              <input type="text" name="email" placeholder="Email Address" required>
+              <div class="error-msg"></div>
+            </div>
+            <div class="field">
+              <input type="password" name="password" placeholder="Password" required>
+              <span class="password-toggle" onclick="togglePassword(this)">👁️</span>
+              <div class="error-msg"></div>
+            </div>
+            <div class="field">
+              <input type="password" name="confirm" placeholder="Confirm password" required>
+              <span class="password-toggle" onclick="togglePassword(this)">👁️</span>
+              <div class="error-msg"></div>
+            </div>
+            <div class="field btn">
+              <div class="btn-layer"></div>
+              <input type="submit" value="Signup">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+   
+  </style>
+
+  <script>
+    function togglePassword(toggleEl) {
+      const input = toggleEl.previousElementSibling;
+      if (input.type === "password") {
+        input.type = "text";
+        toggleEl.textContent = "🙈";
+      } else {
+        input.type = "password";
+        toggleEl.textContent = "👁️";
+      }
+    }
+  </script>
+</body>

@@ -1,0 +1,70 @@
+<% layout('/layouts/boilerplate') %>
+<div class="admin-dashboard-row">
+  <div class="admin-title text-center">
+    <h1>Admin - Booking Page</h1>
+  </div>
+  <div class="admin-card">
+    <div class="admin-card-body">
+      <p>Welcome to the admin booking management page.</p>
+      <% if (bookings.length === 0) { %>
+        <p>No bookings found.</p>
+      <% } else { %>
+        <ul class="admin-bookings-list">
+          <% bookings.forEach(booking => { %>
+            <li class="mb-3">
+              <div><strong>Booking ID:</strong> <%= booking._id %></div>
+              <div><strong>Client Name:</strong> <%= booking.fullName %></div>
+              <div><strong>Email:</strong> <%= booking.email %></div>
+              <div><strong>Phone:</strong> <%= booking.phone %></div>
+              <div><strong>City:</strong> <%= booking.city || "N/A" %></div>
+              <div><strong>Event Type:</strong> <%= booking.eventType %></div>
+              <div><strong>Venue Type:</strong> <%= booking.venueType %></div>
+              <div><strong>Venue Location:</strong> <%= booking.venueLocation %></div>
+              <div><strong>Consultation Date:</strong> <%= booking.consultationDate ? booking.consultationDate.toDateString() : "No date" %></div>
+              <div><strong>Special Requirements:</strong> <%= booking.requirements || "None" %></div>
+              <div><strong>Heard From:</strong> <%= booking.heardFrom %></div>
+              <div><strong>Booked At:</strong>
+                <% if (booking.createdAt) { %>
+                  <%= booking.createdAt.toLocaleDateString() %>
+                  <%= booking.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %>
+                <% } else { %>
+                  N/A
+                <% } %>
+              </div>
+              <div>
+                <strong>Created By (User):</strong>
+                <% if (booking.user) { %>
+                  <%= booking.user.email %>
+                  (ID: <%= booking.user._id %>)
+                <% } else { %>
+                  Unknown
+                <% } %>
+              </div>
+
+              <hr class="my-3">
+              <div>
+                <form action="/admin/bookings/<%= booking._id %>/note" method="POST" class="admin-note-form" style="display:inline-block;">
+                  <label for="adminNote-<%= booking._id %>"><strong>Admin Status/Note:</strong></label>
+                  <select 
+                    id="adminNote-<%= booking._id %>" 
+                    name="adminNote" 
+                    style="width: 70%;"
+                    onchange="this.form.submit()"
+                  >
+                    <option value="Pending" <%= !booking.adminNote || booking.adminNote === 'Pending' ? 'selected' : '' %>>Pending</option>
+                    <option value="Confirmed" <%= booking.adminNote === 'Confirmed' ? 'selected' : '' %>>Confirmed</option>
+                    <option value="In Progress" <%= booking.adminNote === 'In Progress' ? 'selected' : '' %>>In Progress</option>
+                    <option value="Completed" <%= booking.adminNote === 'Completed' ? 'selected' : '' %>>Completed</option>
+                    <option value="Cancelled" <%= booking.adminNote === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                    <option value="Other" <%= booking.adminNote === 'Other' ? 'selected' : '' %>>Other</option>
+                  </select>
+                </form>
+              </div>
+            </li>
+            <hr>
+          <% }) %>
+        </ul>
+      <% } %>
+    </div>
+  </div>
+</div>

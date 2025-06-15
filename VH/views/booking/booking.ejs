@@ -1,0 +1,66 @@
+<% layout('/layouts/boilerplate') %>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="service-title-container col-md-10 offset-md-1 text-center">
+        <h1>Book Your Consultation With Vh Events</h1>
+      </div>
+    </div>
+    <form action="/booking" method="POST" class="mt-4">
+      <h3>Client Details</h3>
+      <div class="mb-3">
+        <input type="text" name="fullName" class="form-control" placeholder="Full Name *" required>
+      </div>
+      <div class="mb-3">
+        <input type="email" name="email" class="form-control" placeholder="Email Address *" required>
+      </div>
+      <div class="mb-3">
+        <input type="tel" name="phone" class="form-control" placeholder="Phone Number *" required>
+      </div>
+      <div class="mb-3">
+        <input type="text" name="city" class="form-control" placeholder="City/Location (optional)">
+      </div>
+      <h3>📅 Event Details</h3>
+      <div class="mb-3">
+        <select name="eventType" class="form-control" required>
+          <option value="">Type of Event *</option>
+          <option>Wedding</option>
+          <option>Corporate</option>
+          <option>Birthday</option>
+          <option>Engagement</option>
+          <option>Anniversary</option>
+          <option>Baby Shower</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <select name="venueType" class="form-control" required>
+          <option value="">Type of Venue *</option>
+          <option>In City</option>
+          <option>Destination</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <input type="text" name="venueLocation" class="form-control" placeholder="Venue Location / City Name">
+      </div>
+      <div class="mb-3">
+        <label>Preferred Consultation Date (optional):</label>
+        <input type="date" name="consultationDate" class="form-control">
+      </div>
+      <div class="mb-3">
+        <textarea name="requirements" class="form-control" rows="3" placeholder="Any Special Requirements / Notes"></textarea>
+      </div>
+      <div class="mb-3">
+        <select name="heardFrom" class="form-control" required>
+          <option value="">How did you hear about us? *</option>
+          <option>Instagram</option>
+          <option>Reference</option>
+          <option>Google</option>
+          <option>Facebook</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Book Consultation</button>
+    </form>
+  </div>
+</body>

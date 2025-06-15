@@ -1,0 +1,153 @@
+<% layout('/layouts/boilerplate') %>
+
+<head>
+  <style>
+
+    .form-group {
+      margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      color: #bfa14a;
+      margin-bottom: 6px;
+      margin-left: 40px;
+    }
+
+    .form-group input[type="text"],
+    .form-group textarea {
+      width: 100%;
+      max-width: 600px;
+      padding: 10px 12px;
+      border: 1.5px solid #e6b800;
+      border-radius: 6px;
+      font-size: 1rem;
+      background: #fffbe6;
+      margin:0PX 0PX 0PX 30PX;
+      color: #7c6a1d;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .form-group input[type="text"]:focus,
+    .form-group textarea:focus {
+      border-color: #bfa14a;
+      box-shadow: 0 0 4px #ffe066;
+    }
+
+    .btn-primary {
+      width: 100PX;
+      background: #bfa14a;
+      color: #fff;
+      border: none;
+      padding: 10px 28px;
+      border-radius: 6px;
+      font-size: 1.08rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      /* margin-top: 8px; */
+      /* margin-bottom: 40PX; */
+      margin: 8PX 10PX 40PX 10PX;
+    }
+
+    .btn-primary:hover {
+      background: #e6b800;
+      color: #ffffff;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="admin-dashboard-row">
+    <div class="admin-title text-center">
+      <h1>ADMIN - Newsletter Subscribers</h1>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-body">
+        <p>Share Newsletters To Subscribers</p>
+      </div>
+       <form action="/admin/newsletters" method="POST">
+      <div class="form-group">
+        <label for="subject">Subject:</label>
+        <input type="text" id="subject" name="subject" required>
+      </div>
+      <div class="form-group">
+        <label for="message">Message:</label>
+        <textarea id="message" name="message" rows="5" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Send Newsletter</button>
+    </form>
+    <hr>
+    </div>
+
+   
+    <div class="admin-card-email-body">
+      <h2>Subscribers List</h2>
+       <input type="text" id="newsletterSearch" placeholder="Search subscribers..." style="width: 60%; margin-bottom: 18px; padding: 8px; border-radius: 6px; border: 1px solid #e6b800;">
+
+       <% newsletters.forEach(newsletter => { %>
+        <div class="mb-3 adm-nl-dpl">
+            <p class="newsletter-email"><%= newsletter.email %></p>
+            <form action="/newsletters/<%= newsletter._id %>?_method=DELETE" method="POST" class="d-inline-block ml-2">
+              <button type="submit" class="btn btn-danger btn-sm">Unsubscribe</button>
+            </form>
+        </div>
+        <% }) %>
+    </div>
+
+    </div>
+
+  
+
+  </div>
+</body>
+
+<style>
+  /* // Optional: Add any JavaScript functionality if needed */
+  .adm-nl-dpl{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+   .adm-nl-dpl p{
+    margin: 0px 0px 0px 10px;
+    color: #7c6a1d;
+   }
+  .adm-nl-dpl form button{
+    margin:-45px 0px 0px 10px;
+    height: 30px;
+  }
+
+ .admin-card-email-body{
+    height: 300px;
+    width: 60%;
+    margin-top: 20px;
+    padding: 40px;
+    background-color: #fffbe6;
+    border-radius: 6px;
+    border: 1.5px solid #e6b800;
+    overflow-y: auto;      /* Only vertical scroll */
+    overflow-x: hidden;    /* Hide horizontal scroll */
+    box-sizing: border-box;
+  }
+
+  .admin-card-email-body h2 {
+    color: #bfa14a;
+    margin-bottom: 15px;
+  }
+</style>
+
+<script>
+document.getElementById('newsletterSearch').addEventListener('input', function() {
+  const filter = this.value.toLowerCase();
+  document.querySelectorAll('.adm-nl-dpl').forEach(function(item) {
+    const email = item.querySelector('.newsletter-email').textContent.toLowerCase();
+    item.style.display = email.includes(filter) ? '' : 'none';
+  });
+});
+</script>

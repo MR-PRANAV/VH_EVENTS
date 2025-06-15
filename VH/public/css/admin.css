@@ -1,0 +1,148 @@
+body {
+  background: #f7f7fa;
+  font-family: 'Poppins', Arial, sans-serif;
+}
+.admin-nav {
+  background: #222;
+  padding: 10px 0;
+}
+.admin-nav ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  margin: 0; padding: 0;
+}
+.admin-nav li {
+  margin: 0 18px;
+}
+.admin-nav a {
+  color: #ffe066;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.admin-nav a:hover {
+  color: #fff;
+}
+
+.admin-dashboard-row{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.card {
+  width: 80%;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(191, 161, 74, 0.08);
+  margin-bottom: 20px;
+}
+.card-body {
+  padding: 24px;
+}
+.admin-dashboard-container {
+  max-width: 800px;
+  margin: 40px auto 0 auto;
+  padding: 24px 18px;
+  background: #fffdfa;
+  border-radius: 18px;
+  box-shadow: 0 4px 32px rgba(160, 120, 40, 0.13);
+}
+.admin-title h1 {
+  color: #bfa14a;
+  font-weight: 800;
+  font-size: 2.2rem;
+  margin-bottom: 18px;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px #fff7cc;
+}
+.admin-card {
+  width: 80%;
+  background: linear-gradient(90deg, #fff7cc 80%, #ffe066 100%);
+  border-radius: 10px;
+  margin-bottom: 22px;
+  box-shadow: 0 2px 12px rgba(191, 161, 74, 0.08);
+  border: 5px solid #e6b800;
+  padding: 0;
+}
+.admin-card-body {
+  padding: 24px 20px;
+}
+.admin-card-body h2 {
+  color: #e6b800;
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin-bottom: 16px;
+}
+.admin-actions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.admin-actions-list li {
+  margin-bottom: 12px;
+}
+.admin-actions-list a {
+  color: #bfa14a;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 1.08rem;
+  transition: color 0.2s;
+}
+.admin-actions-list a:hover {
+  color: #e6b800;
+  text-decoration: underline;
+}
+@media (max-width: 600px) {
+  .admin-dashboard-container {
+    padding: 10px 2vw;
+    margin-top: 18px;
+  }
+  .admin-title h1 {
+    font-size: 1.3rem;
+  }
+  .admin-card-body h2 {
+    font-size: 1.05rem;
+  }
+  .admin-card-body {
+    padding: 12px 6px;
+  }
+}
+
+
+/* admin notes css */
+
+.admin-note-form {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-note-form label {
+  font-weight: 600;
+  color: #bfa14a;
+  margin-right: 8px;
+}
+
+.admin-note-form select {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #e6b800;
+  background: #fffbe6;
+  color: #7c6a1d;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  width: 70%;
+}
+
+.admin-note-form select:focus {
+  border-color: #bfa14a;
+  box-shadow: 0 0 4px #ffe066;
+}

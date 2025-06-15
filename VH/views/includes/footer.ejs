@@ -1,0 +1,97 @@
+<!-- CSS File includes.css -->
+<!-- JS file is commen script.js -->
+
+<body>
+
+
+
+
+    <section class="footer">
+        <div class="footer-logo">
+            <a href="/" class="logo">
+                <img src="\other\img\homeimg.png" alt="Logo">
+                <h1>VH EVENT PLANNER</h1>
+            </a>
+        </div>
+
+        <div class="footer-row">
+            <div class="footer-col">
+                <h4>Info</h4>
+                <ul class="links">
+                    <li><a href="/#about">About Us</a></li>
+                    <li><a href="/contact">Contact Us</a></li>
+                    <!-- <li><a href="#">Customers</a></li>
+                    <li><a href="#">Service</a></li>
+                    <li><a href="#">Collection</a></li> -->
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Explore</h4>
+                <ul class="links">
+                    <!-- <li><a href="#">Free Designs</a></li>
+                    <li><a href="#">Latest Designs</a></li>
+                    <li><a href="#">Themes</a></li>
+                    <li><a href="#">Popular Designs</a></li>
+                    <li><a href="#">Art Skills</a></li>
+                    <li><a href="#">New Uploads</a></li> -->
+                    <li><a href="/services">Service</a></li>
+                    <li><a href="/#gallery">Gallery</a></li>
+                    <li><a href="/#reviews">Reviews</a></li>
+                        
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ul class="links">
+                    <li><a href="#">Customer Agreement</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <!-- <li><a href="#">GDPR</a></li> -->
+                    <li><a href="#">Security</a></li>
+                    <!-- <li><a href="#">Testimonials</a></li> -->
+                    <!-- <li><a href="#">Media Kit</a></li> -->
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Newsletter</h4>
+                <p>
+                    Subscribe to our newsletter for a weekly dose
+                    of news, updates, helpful tips, and
+                    exclusive offers.
+                </p>
+                <form action="/newsletter" method="POST" id="newsletterForm" novalidate>
+  <input type="text" name="newsletteremail" id="newsletteremail" placeholder="Your email" required>
+  <div class="error-msg" id="newsletterError"></div>
+  <button type="submit">SUBSCRIBE</button>
+</form>
+
+<!-- // Form validation for newsletter subscription Start -->
+<script>
+  document.getElementById("newsletterForm").addEventListener("submit", function (e) {
+    const emailInput = document.getElementById("newsletteremail");
+    const errorDiv = document.getElementById("newsletterError");
+    const emailValue = emailInput.value.trim();
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    errorDiv.textContent = ""; // Clear any previous error
+
+    if (emailValue === "") {
+      e.preventDefault();
+      errorDiv.textContent = "Email is required.";
+    } else if (!emailPattern.test(emailValue)) {
+      e.preventDefault();
+      errorDiv.textContent = "Please enter a valid email address.";
+    }
+  });
+</script>
+<!-- // Form validation for newsletter subscription End -->
+
+                <div class="icons">
+                    <i class="fa-brands fa-facebook-f"></i>
+                    <i class="fa-brands fa-twitter"></i>
+                    <i class="fa-brands fa-instagram"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>

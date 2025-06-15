@@ -1,0 +1,27 @@
+<% layout('/layouts/boilerplate') %>
+<body >
+  <div class="admin-dashboard-row">
+    <div class="admin-title text-center">
+      <h1>Admin Dashboard</h1>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-body">
+        <p>You are logged in as an admin.</p>
+        <p>Use the navigation menu to manage users, view reports, and configure settings.</p>
+      </div>
+    </div>
+    <div class="admin-card mt-3">
+      <div class="admin-card-body">
+        <h2>Admin Actions</h2>
+        <ul class="admin-actions-list">
+          <!-- <li><a href="/admin/users">Manage Users</a></li> -->
+          <li><a href="/admin/bookings">View Bookings</a></li>
+          <li><a href="/admin/newsletters">Share Newsletters</a></li>
+          <li><a href="/admin/gallery/upload">Upload Media</a></li>
+          <!-- /admin/gallery/upload -->
+          <!-- <li><a href="/admin/settings">Configure Settings</a></li> -->
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>

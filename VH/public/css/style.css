@@ -1,0 +1,21 @@
+
+body{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+}
+
+
+.containera{
+        height: auto;
+        width: 100%;
+        border: 1px solid rgba(0, 0, 0, 0.523);
+}
+
+
+.container-flash{
+        height: 20px;
+        width: 100%;
+        border: 1px solid rgba(0, 0, 0, 0.523);
+}

@@ -1,0 +1,49 @@
+<% layout('/layouts/boilerplate') %>
+<body>
+  <div class="container">
+    <div class="row">
+      <h1>Profile</h1>
+      <p>USER EMAIL: <%= currentUser.email %></p>
+      <% if (currentUser.isAdmin === true) { %>
+        <p>ADMIN ACCESS: <%= currentUser.isAdmin %></p>
+        <form action="/admin" method="GET" class="mb-3">
+          <button type="submit" class="btn btn-primary">Go to Admin Dashboard</button>
+        </form>
+      
+      <% } %>
+        <br><br>
+      <h2>Your Bookings</h2>
+      <% if (bookings.length === 0) { %>
+        <p>No bookings yet.</p>
+      <% } else { %>
+        <ul>
+          <% bookings.forEach(function(booking) { %>
+            <li class="mb-3">
+              <div><strong>Booking ID:</strong> <%= booking._id %></div>
+              <div><strong>Event Type:</strong> <%= booking.eventType %></div>
+              <div><strong>Venue Type:</strong> <%= booking.venueType %></div>
+              <div><strong>Venue Location:</strong> <%= booking.venueLocation %></div>
+              <div><strong>Consultation Date:</strong> <%= booking.consultationDate ? booking.consultationDate.toDateString() : "No date" %></div>
+              <div><strong>Full Name:</strong> <%= booking.fullName %></div>
+              <div><strong>Email:</strong> <%= booking.email %></div>
+              <div><strong>Phone:</strong> <%= booking.phone %></div>
+              <div><strong>City:</strong> <%= booking.city || "N/A" %></div>
+              <div><strong>Special Requirements:</strong> <%= booking.requirements || "None" %></div>
+              <div><strong>Heard From:</strong> <%= booking.heardFrom %></div>
+              <div><strong>Booked At:</strong> <%= booking.createdAt ? booking.createdAt.toDateString() : "N/A" %></div>
+              <form action="/booking/<%= booking._id %>?_method=DELETE" method="POST" class="mt-2 mb-2" onsubmit="return confirmCancel();">
+                <button type="submit" class="btn btn-danger btn-sm">Cancel Booking</button>
+              </form>
+              
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </div>
+  </div>
+  <script>
+    function confirmCancel() {
+      return confirm("Are you sure you want to cancel this booking? This action cannot be undone.");
+    }
+  </script>
+</body>
