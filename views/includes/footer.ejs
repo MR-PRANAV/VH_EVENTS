@@ -2,10 +2,6 @@
 <!-- JS file is commen script.js -->
 
 <body>
-
-
-
-
     <section class="footer">
         <div class="footer-logo">
             <a href="/" class="logo">
@@ -35,23 +31,35 @@
                     <li><a href="#">Art Skills</a></li>
                     <li><a href="#">New Uploads</a></li> -->
                     <li><a href="/services">Service</a></li>
-                    <li><a href="/#gallery">Gallery</a></li>
+                    <li><a href="/gallery">Gallery</a></li>
                     <li><a href="/#reviews">Reviews</a></li>
-                        
+                    <li><a href="/services#management">Management M...</a></li>
                 </ul>
             </div>
             <div class="footer-col">
                 <h4>Legal</h4>
                 <ul class="links">
-                    <li><a href="#">Customer Agreement</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <!-- <li><a href="#">GDPR</a></li> -->
-                    <li><a href="#">Security</a></li>
-                    <!-- <li><a href="#">Testimonials</a></li> -->
-                    <!-- <li><a href="#">Media Kit</a></li> -->
+                    <li><a href="/agreement#client-agreement-content">Client Agreement</a></li>
+                    <li><a href="/agreement#management-agreement-content">Management Agreement</a></li>
+                    <li><a href="/agreement#privacy-policy-agreement-content">Privacy Policy</a></li>
+                    <li><a href="/agreement#security-policy-content">Security</a></li>
+
                 </ul>
             </div>
             <div class="footer-col">
+
+                 <div class="icons">
+                    <!-- <i class="fa-brands fa-facebook-f"></i> -->
+
+                    <a href="https://wa.me/917066670417" target="_blank">
+                        <i class="fa-brands fa-whatsapp" style="color: rgb(34, 255, 0);"></i>
+                    </a>
+
+                     <a href="https://www.instagram.com/invites/contact/?igsh=1c90t7sgp6x4z&utm_content=x5sicb3" target="_blank">
+                        <i class="fa-brands fa-instagram" style="color: #5b51d8"></i>
+                     </a>
+                </div>
+<hr>
                 <h4>Newsletter</h4>
                 <p>
                     Subscribe to our newsletter for a weekly dose
@@ -59,12 +67,27 @@
                     exclusive offers.
                 </p>
                 <form action="/newsletter" method="POST" id="newsletterForm" novalidate>
-  <input type="text" name="newsletteremail" id="newsletteremail" placeholder="Your email" required>
-  <div class="error-msg" id="newsletterError"></div>
-  <button type="submit">SUBSCRIBE</button>
-</form>
+                    <input type="text" name="newsletteremail" id="newsletteremail" placeholder="Your email" required>
+                    <div class="error-msg" id="newsletterError"></div>
+                    <button type="submit">SUBSCRIBE</button>
+                </form>
+                <hr>
+                <sup>Developed by @_Mr_Pranav____ 
+                   
+                    <a href="https://www.instagram.com/_mr_pranav____/" target="_blank">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                </sup>
+            </div>
+        </div>
+    </section>
 
-<!-- // Form validation for newsletter subscription Start -->
+
+
+
+
+
+    <!-- // Form validation for newsletter subscription Start -->
 <script>
   document.getElementById("newsletterForm").addEventListener("submit", function (e) {
     const emailInput = document.getElementById("newsletteremail");
@@ -85,13 +108,8 @@
 </script>
 <!-- // Form validation for newsletter subscription End -->
 
-                <div class="icons">
-                    <i class="fa-brands fa-facebook-f"></i>
-                    <i class="fa-brands fa-twitter"></i>
-                    <i class="fa-brands fa-instagram"></i>
-                </div>
-            </div>
-        </div>
-    </section>
-
 </body>
+
+
+
+

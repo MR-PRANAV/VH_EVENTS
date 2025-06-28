@@ -15,15 +15,25 @@
             </i>
             <!-- <div class="nav-bg"></div> -->
             <ul class="navbar-list">
-                  <li><a href="/">Home</a></li>
-                  <li><a href="/services">Services</a></li>
-                  <li><a href="/booking">Book Yours</a></li>
-                  <li><a href="/contact">Contact</a></li>
+                  <li><a class="navbar-li-a" href="/">Home</a></li>
+                  <li><a class="navbar-li-a" href="/services">Services</a></li>
+                  <li><a class="navbar-li-a" href="/booking">Book Yours</a></li>
+                  <li><a class="navbar-li-a" href="/contact">Contact</a></li>
                   <% if (currentUser) { %>
-                    <li><a href="/logout">Logout</a></li>
-                   <li><a href="/profile">Profile</a></li>
+                        <li><a class="navbar-li-a" href="/profile">Profile</a></li>
+                    <li>
+                        <a href="/logout">
+                              <!-- Logout -->
+                              logout
+                        </a>
+                  </li>
                   <% } else { %>
-                    <li><a href="/login">Login</a></li>
+                    <li>
+                        <a  href="/login">
+                              <!-- Login -->
+                              login
+                        </a>
+                  </li>
                   <% } %>
             </ul>
 

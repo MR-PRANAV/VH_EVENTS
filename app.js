@@ -10,6 +10,7 @@ const LocalStrategy = require("passport-local");
 const User = require("./models/User");
 const MongoStore = require('connect-mongo');
 const methodOverride = require('method-override');
+const ManagementProfile = require("./models/management"); 
 if (process.env.NODE_ENV != "production") {
   require("dotenv").config();
 }
@@ -19,13 +20,14 @@ const newsletterRouter = require("./models/newsletter");
 const Booking = require("./models/Booking");
 const Media = require('./models/media');
 const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary'); // <-- Add this line
+const { CloudinaryStorage } = require('multer-storage-cloudinary'); 
 const multer = require('multer');
+const upload = multer({ dest: 'uploads/' }); 
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.CLOUD_API_KEY,
-  api_secret: process.env.CLOUDE_API_SECRET,
+  api_secret: process.env.CLOUD_API_SECRET,
 });
 
 const storage = new CloudinaryStorage({
@@ -35,7 +37,7 @@ const storage = new CloudinaryStorage({
     resource_type: file.mimetype.startsWith('video') ? 'video' : 'image',
   }),
 });
-const upload = multer({ storage });
+const cloudinaryUpload = multer({ storage });
 
 const app = express();
 let port = 3030;
@@ -72,7 +74,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: "mongodb://localhost:27017/vh_events" }),
-    cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 } //VALID FOR 7 DAYS 
+    cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 } //COOKIE VALID FOR 7 DAYS for user login session
   })
 );
 app.use(flash());
@@ -95,9 +97,10 @@ app.use((req, res, next) => {
 
 
 
-// -----------------Commen--ROUTES---------------------------------
+// -----------------Commen--ROUTES--------------------------  -------
 //get to render home page Start #base page
 app.get("/", async (req, res) => {
+  // stared media from the database
   const starredMedia = await Media.find({ starred: true }).sort({ uploadedAt: -1 });
   res.render('home/home.ejs', { starredMedia });
 });
@@ -122,44 +125,63 @@ app.get("/contact", (req, res) => {
 });
 //get to render contact page End
 
-//post to send contact form data Start
+
 app.post("/contact", async (req, res) => {
   const { FirstName, Email, PhoneNumber, TextArea } = req.body;
-  // Nodemailer setup
+
+  // Nodemailer transporter
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: process.env.GMAIL_USER, // Replace with your email
-      pass: process.env.GMAIL_PASS, // Replace with your email password or app password
+      user: process.env.VH_EVENTS_USER,
+      pass: process.env.VH_EVENTS_PASS,
     },
   });
+
+  // email setup
   const mailOptions = {
-    from: Email,
-    to: "pranavpatil020389@gmail.com", // Admin email
-    subject: `New Contact Form Submission from VH Events by ${FirstName}`,
+    from: `"VH Events Contact" <${process.env.VH_EVENTS_USER}>`,
+    to: process.env.VH_EVENTS_USER, 
+    subject: `New Contact Form Submission from ${FirstName}`,
     text: `
-          First Name: ${FirstName}
-          Email: ${Email}
-          Phone Number: ${PhoneNumber}
-          Query: ${TextArea}
-      `,
+    sender: ${Email}
+    receiver: ${process.env.VH_EVENTS_USER}
+    -------------------------------------------------------------
+    -------------------------------------------------------------
+📩 New Contact Form Message:
+
+👤 Name: ${FirstName}
+📧 Email: ${Email}
+📞 Phone: ${PhoneNumber}
+
+📝 Query:
+${TextArea}
+    `,
+    replyTo: Email, 
   };
-  // Send email
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log(error);
-      return res.status(500).send("Error sending email");
-    }
-    // console.log('Email sent: ' + info.response);
-    res.flash("success", "Email sent successfully!").redirect("/contact"); // Redirect to contact page with success message('Form submitted successfully!');
-  });
+
+  try {
+    await transporter.sendMail(mailOptions);
+    req.flash("success", "Your message has been sent successfully!");
+    res.redirect("/contact");
+  } catch (error) {
+    console.error("Email sending error:", error);
+    req.flash("error", "Error sending email ❗ PLEASE CONTACT US BY 9588626847 OR vh.eventplanner25@gmail.com");
+    res.redirect("/contact");
+  }
 });
-//post to send contact form data End
+
+
+
+
 
 //get to render PROFILE page Start
 app.get("/profile", isLoggedIn, async (req, res) => {
   const bookings = await Booking.find({ user: req.user._id });
-  res.render("profile/profile.ejs", { bookings });
+  // get management profile if exists
+  const managementProfile = await ManagementProfile.findOne({ user: req.user._id });
+  // console.log("Management Profile:",managementProfile.profilePicture);
+  res.render("profile/profile.ejs", { bookings, managementProfile });
 });
 //get to render PROFILE page End
 
@@ -168,32 +190,29 @@ app.get('/gallery', async (req, res) => {
   res.render('gallery/gallery.ejs', { media });
 });
 
-
-
-
-
-
-
-
+//get to render management form page Start
+app.get("/management", isLoggedIn, (req, res) => {
+  res.render("management/management.ejs");
+});
+//get to render management form page End
 
 // -------------------newsletter----------------------------------
 
-// Newsletter email saving route Start
+//newsletter email saving Start
 app.post("/newsletter", async (req, res) => {
   const newsletterEmail = req.body.newsletteremail;
   try {
-    // Check if the email already exists in the database
     const existingEmail = await newsletterRouter.findOne({
       email: newsletterEmail,
     });
 
     if (existingEmail) {
-      // If the email exists, send a response
       req.flash("error", "You are already subscribed with this email ❗");
       res.redirect("/");
       return;
     }
-    // If the email does not exist, save it
+   
+    // otherwise
     const newsletter = new newsletterRouter({
       email: newsletterEmail,
     });
@@ -209,7 +228,7 @@ app.post("/newsletter", async (req, res) => {
 });
 // Newsletter email saving route End
 
-// /admin/newsletters/<%= newsletter._id %>?_method=DELETE
+// Delete newsletter email route Start
 app.delete("/newsletter/:id", async (req, res) => {
   try {
     const newsletter = await newsletterRouter.findByIdAndDelete(req.params.id);
@@ -225,13 +244,7 @@ app.delete("/newsletter/:id", async (req, res) => {
     res.status(500).send("Error unsubscribing from newsletter.");
   }
 });
-
-
-
-
-
-
-
+// Delete newsletter email route End
 
 
 // -------------------LOGIN - SIGNUP---------------------------------
@@ -241,7 +254,7 @@ app.get("/login", (req, res) => {
   res.render("login/login.ejs");
 });
 
-// Register route
+//Register route
 app.post("/register", async (req, res) => {
   const { email, password, confirm } = req.body;
   if (password !== confirm) {
@@ -249,7 +262,6 @@ app.post("/register", async (req, res) => {
     return res.redirect("/login");
   }
   try {
-    // Check if email is already subscribed to the newsletter
     let existingEmail = await newsletterRouter.findOne({ email });
     if (!existingEmail) {
       // If not subscribed, subscribe now
@@ -324,51 +336,57 @@ app.post("/booking", isLoggedIn, async (req, res) => {
 });
 //post to save booking info End
 
-//delete booking Start
+
 app.delete("/booking/:id", isLoggedIn, isBookingOwner, async (req, res) => {
   try {
-    // Find the booking to get details for the email
+    // Get booking info
     const booking = await Booking.findById(req.params.id);
 
-    // Send cancellation email to admin
+    // Sending cancellati email to admin
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASS,
+        user: process.env.VH_EVENTS_USER, 
+        pass: process.env.VH_EVENTS_PASS, 
       },
     });
 
     const mailOptions = {
-      from: process.env.GMAIL_USER,
-      to: "admin@example.com", // Replace with your admin email
+      from: `"VH Events Booking System" <${process.env.VH_EVENTS_USER}>`, 
+      to: process.env.VH_EVENTS_USER, 
       subject: `Booking Cancelled - VH Events`,
-      text: `A booking has been cancelled.
+      text: `
 
-                Client Name: ${booking.fullName}
-                Email: ${booking.email}
-                Phone: ${booking.phone}
-                Event Type: ${booking.eventType}
-                Venue Type: ${booking.venueType}
-                Venue Location: ${booking.venueLocation}
-                Consultation Date: ${booking.consultationDate
-          ? booking.consultationDate.toDateString()
-          : "Not specified"
-        }
+    sender: ${booking.email}
+    receiver: ${process.env.VH_EVENTS_USER}
+    -------------------------------------------------------------
+    -------------------------------------------------------------
+
+🚫 A booking has been cancelled:
+      booking ID: ${booking._id}
+👤 Client Name: ${booking.fullName}
+📧 Email: ${booking.email}
+📞 Phone: ${booking.phone}
+
+🎉 Event Type: ${booking.eventType}
+🏛️ Venue Type: ${booking.venueType}
+📍 Venue Location: ${booking.venueLocation}
+📅 Consultation Date: ${booking.consultationDate ? booking.consultationDate.toDateString() : "Not specified"}
+
+🗑️ Cancelled By: Client
       `,
+      replyTo: booking.email, 
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error("Error sending cancellation email:", error);
-      }
-    });
+    await transporter.sendMail(mailOptions);
 
-    // Delete the booking
+    // Delete booking from database
     await Booking.deleteOne({ _id: req.params.id });
+
     req.flash("success", "Booking cancelled successfully.");
     res.redirect("/profile");
   } catch (e) {
+    console.error("Cancellation failed:", e);
     req.flash(
       "error",
       "There was an error cancelling your booking. Please try again."
@@ -376,17 +394,6 @@ app.delete("/booking/:id", isLoggedIn, isBookingOwner, async (req, res) => {
     res.redirect("/profile");
   }
 });
-//derlete booking End
-
-
-
-
-
-
-
-
-
-
 
 
 // -------------------ADMIN---------------------------------
@@ -400,7 +407,7 @@ app.get("/admin/bookings", isLoggedIn, isAdmin, async (req, res) => {
   try {
     const bookings = await Booking.find({})
       .populate("user")
-      .sort({ createdAt: -1 }); // Sort by creation date descending
+      .sort({ createdAt: -1 }); 
     res.render("admin/admin_booking.ejs", { bookings });
   } catch (e) {
     req.flash("error", "Error fetching bookings.");
@@ -435,13 +442,13 @@ app.post("/admin/newsletters", isLoggedIn, isAdmin, async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASS,
+        user: process.env.VH_EVENTS_USER,
+        pass: process.env.VH_EVENTS_PASS,
       },
     });
     for (const newsletter of newsletters) {
       const mailOptions = {
-        from: process.env.GMAIL_USER,
+        from: `"VH Events Newsletter" <${process.env.VH_EVENTS_USER}>`, 
         to: newsletter.email,
         subject: subject,
         text: message,
@@ -464,7 +471,7 @@ app.get('/admin/gallery/upload', isLoggedIn, isAdmin, async (req, res) => {
   res.render('admin/admin_gallery_upload.ejs', { media });
 });
 
-app.post('/admin/gallery/upload', isLoggedIn, isAdmin, upload.single('media'), async (req, res) => {
+app.post('/admin/gallery/upload', isLoggedIn, isAdmin, cloudinaryUpload.single('media'), async (req, res) => {
   const file = req.file;
   if (!file) {
     req.flash('error', 'No file uploaded.');
@@ -479,7 +486,7 @@ app.post('/admin/gallery/upload', isLoggedIn, isAdmin, upload.single('media'), a
 app.post('/admin/gallery/delete/:id', isLoggedIn, isAdmin, async (req, res) => {
   const media = await Media.findById(req.params.id);
   if (media) {
-    // Remove from Cloudinary
+    // remove from Cloudinary
     const publicId = media.url.split('/').pop().split('.')[0];
     await cloudinary.uploader.destroy(publicId, { resource_type: media.type });
     await media.deleteOne();
@@ -496,7 +503,130 @@ app.post('/admin/gallery/star/:id', isLoggedIn, isAdmin, async (req, res) => {
   res.redirect('/admin/gallery/upload');
 });
 
+app.get('/admin/managementprofiles', isLoggedIn, isAdmin, async (req, res) => {
+  try {
+    const managementProfiles = await ManagementProfile.find({}).populate('user', 'email').sort({ createdAt: -1 });
+    res.render("admin/admin_management_profiles.ejs", { managementProfiles });
+  } catch (e) {
+    req.flash("error", "Error fetching management profiles.");
+    res.redirect("/admin");
+  }
+});
 
+// -------------------MANAGEMENT---------------------------------
+
+app.get("/management", isLoggedIn, async (req, res) => {
+  try {
+    res.render("management/management.ejs");
+  } catch (e) {
+    req.flash("error", "Error fetching management form.");
+    res.redirect("/");
+  }
+});
+
+app.post("/management", isLoggedIn, upload.single('profilePicture'), async (req, res) => {
+  try {
+    //upload image to Cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'vh-events/management-profiles',
+    });
+
+    
+    const {
+      fullName, 
+      mobileNumber, 
+      age, 
+      gender, 
+      height, 
+      currentCity,
+      otherCities, 
+      languages, 
+      otherLanguage, 
+      experienceYears, 
+      eventsWorked,
+      eventCategories, 
+      companiesWorkedWith, 
+      departmentsWorked, 
+      bestDepartment,
+      skills, 
+      workingStyle, 
+      instagram, 
+      agreeContact, 
+      confirmTruth
+    } = req.body;
+
+    
+    const otherCitiesArr = otherCities ? otherCities.split(',').map(s => s.trim()) : [];
+    const languagesArr = Array.isArray(languages) ? languages : (languages ? [languages] : []);
+    const eventCategoriesArr = Array.isArray(eventCategories) ? eventCategories : (eventCategories ? [eventCategories] : []);
+    const departmentsWorkedArr = Array.isArray(departmentsWorked) ? departmentsWorked : (departmentsWorked ? [departmentsWorked] : []);
+    const skillsArr = Array.isArray(skills) ? skills : (skills ? [skills] : []);
+
+    // Create and save profile
+    const profile = new ManagementProfile({
+      user: req.user._id,
+      profilePicture: result.secure_url,
+      fullName,
+      mobileNumber,
+      age,
+      gender,
+      height,
+      currentCity,
+      otherCities: otherCitiesArr,
+      languages: languagesArr,
+      otherLanguage,
+      experienceYears,
+      eventsWorked,
+      eventCategories: eventCategoriesArr,
+      companiesWorkedWith,
+      departmentsWorked: departmentsWorkedArr,
+      bestDepartment,
+      skills: skillsArr,
+      workingStyle,
+      instagram,
+      agreeContact: agreeContact === 'on' || agreeContact === true,
+      confirmTruth: confirmTruth === 'on' || confirmTruth === true
+    });
+
+    await profile.save();
+
+    req.flash("success", "Management profile created successfully!");
+    res.redirect("/profile");
+  } catch (e) {
+    console.error(e);
+    req.flash("error", "Error creating management profile.");
+    res.redirect("/management");
+  }
+});
+
+
+app.delete("/management/:id", isLoggedIn, async (req, res) => {
+  try {
+    const profile = await ManagementProfile.findByIdAndDelete(req.params.id);
+    if (!profile) {
+      req.flash("error", "Management profile not found.");
+      return res.redirect("/profile");
+    }
+    req.flash("success", "Management profile deleted successfully.");
+    res.redirect("/profile"); 
+  } catch (e) {
+    console.error(e);
+    req.flash("error", "Error deleting management profile.");
+    res.redirect("/profile");
+  }
+});
+
+app.post('/management/:id/powerhouse', isLoggedIn, isAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { powerhouse } = req.body;
+  await ManagementProfile.findByIdAndUpdate(id, { powerhouse: powerhouse === 'true' });
+  req.flash('success', 'Powerhouse status updated!');
+  res.redirect('/admin/managementprofiles');
+});
+
+app.get("/agreement", (req, res) => {
+  res.render("agreement/agreement.ejs");
+});
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
