@@ -1,0 +1,296 @@
+<% layout('/layouts/boilerplate') %>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="container my-5">
+  <form id="managementForm" enctype="multipart/form-data" method="POST" action="/management/<%= managementProfile._id %>?_method=PUT" class="bg-white p-4 rounded shadow-sm">
+    <h2 class="mb-4 text-center">Edit Management Profile</h2>
+
+    <!-- 1. Profile Picture Upload -->
+    <div class="mb-3">
+      <label class="form-label">Profile Picture*</label>
+      <input type="file" class="form-control" name="profilePicture" accept="image/*">
+      <% if (managementProfile.profilePicture) { %>
+        <img src="<%= managementProfile.profilePicture %>" alt="Current Profile" class="mt-2" style="max-width:120px; border-radius:10px;">
+      <% } %>
+    </div>
+    
+    <!-- 2. Basic Personal Information -->
+    <div class="mb-3">
+      <label class="form-label">Full Name*</label>
+      <input type="text" class="form-control" name="fullName" value="<%= managementProfile.fullName %>" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Mobile Number*</label>
+      <input type="tel" class="form-control" name="mobileNumber" value="<%= managementProfile.mobileNumber %>" required>
+    </div>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email*</label>
+      <input type="email" class="form-control" id="email" name="email" value="<%= managementProfile.email %>" required>
+      <div id="emailError" class="text-danger mt-1" style="display:none;"></div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Age*</label>
+      <input type="number" class="form-control" name="age" value="<%= managementProfile.age %>" required>
+    </div>
+    <div class="mb-3">
+      <label for="gender" class="form-label">Gender*</label>
+      <select class="form-select" id="gender" name="gender" required>
+        <option value="">Select Gender</option>
+        <option value="Male" <%= managementProfile.gender === "Male" ? "selected" : "" %>>Male</option>
+        <option value="Female" <%= managementProfile.gender === "Female" ? "selected" : "" %>>Female</option>
+        <option value="Other" <%= managementProfile.gender === "Other" ? "selected" : "" %>>Other</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Height</label>
+      <input type="text" class="form-control" name="height" value="<%= managementProfile.height %>">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Current City*</label>
+      <input type="text" class="form-control" name="currentCity" value="<%= managementProfile.currentCity %>" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Other Cities You Worked In</label>
+      <input type="text" class="form-control" name="otherCities" value="<%= (managementProfile.otherCities || []).join(', ') %>" placeholder="Comma separated">
+    </div>
+    <div class="mb-3">
+      <label class="form-label d-block">Languages Known:</label>
+      <% const langs = managementProfile.languages || []; %>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="languages" id="langMarathi" value="Marathi" <%= langs.includes("Marathi") ? "checked" : "" %>>
+        <label class="form-check-label" for="langMarathi">Marathi</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="languages" id="langHindi" value="Hindi" <%= langs.includes("Hindi") ? "checked" : "" %>>
+        <label class="form-check-label" for="langHindi">Hindi</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="languages" id="langEnglish" value="English" <%= langs.includes("English") ? "checked" : "" %>>
+        <label class="form-check-label" for="langEnglish">English</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="languages" id="langGujarati" value="Gujarati" <%= langs.includes("Gujarati") ? "checked" : "" %>>
+        <label class="form-check-label" for="langGujarati">Gujarati</label>
+      </div>
+      <input type="text" class="form-control mt-2" name="otherLanguage" placeholder="Other language" value="<%= managementProfile.otherLanguage %>">
+    </div>
+    
+    <!-- 4. Event Management Experience -->
+    <div class="mb-3">
+      <label class="form-label">Total Years of Experience*</label>
+      <input type="number" class="form-control" name="experienceYears" value="<%= managementProfile.experienceYears %>" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Number of Events Worked</label>
+      <input type="number" class="form-control" name="eventsWorked" value="<%= managementProfile.eventsWorked %>">
+    </div>
+    <div class="mb-3">
+      <label class="form-label d-block">Event Categories You’ve Worked In:</label>
+      <% const cats = managementProfile.eventCategories || []; %>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="eventCategories" id="catWeddings" value="Weddings" <%= cats.includes("Weddings") ? "checked" : "" %>>
+        <label class="form-check-label" for="catWeddings">Weddings</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="eventCategories" id="catCorporate" value="Corporate" <%= cats.includes("Corporate") ? "checked" : "" %>>
+        <label class="form-check-label" for="catCorporate">Corporate</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="eventCategories" id="catPrivate" value="Private" <%= cats.includes("Private") ? "checked" : "" %>>
+        <label class="form-check-label" for="catPrivate">Private</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="eventCategories" id="catConcerts" value="Concerts" <%= cats.includes("Concerts") ? "checked" : "" %>>
+        <label class="form-check-label" for="catConcerts">Concerts</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="eventCategories" id="catCollege" value="College Events" <%= cats.includes("College Events") ? "checked" : "" %>>
+        <label class="form-check-label" for="catCollege">College Events</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="eventCategories" id="catOthers" value="Others" <%= cats.includes("Others") ? "checked" : "" %>>
+        <label class="form-check-label" for="catOthers">Others</label>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Companies/Brands You’ve Worked With</label>
+      <textarea class="form-control" name="companiesWorkedWith"><%= managementProfile.companiesWorkedWith %></textarea>
+    </div>
+    
+    <!-- 5. Department Experience -->
+    <div class="mb-3">
+      <label class="form-label d-block">Departments You've Worked In:</label>
+      <% const deps = managementProfile.departmentsWorked || []; %>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="departmentsWorked" id="depShadow" value="Shadow" <%= deps.includes("Shadow") ? "checked" : "" %>>
+        <label class="form-check-label" for="depShadow">Shadow</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="departmentsWorked" id="depHospitality" value="Hospitality" <%= deps.includes("Hospitality") ? "checked" : "" %>>
+        <label class="form-check-label" for="depHospitality">Hospitality</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="departmentsWorked" id="depProduction" value="Production" <%= deps.includes("Production") ? "checked" : "" %>>
+        <label class="form-check-label" for="depProduction">Production</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="departmentsWorked" id="depShowFlow" value="Show Flow" <%= deps.includes("Show Flow") ? "checked" : "" %>>
+        <label class="form-check-label" for="depShowFlow">Show Flow</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="departmentsWorked" id="depLogistics" value="Logistics" <%= deps.includes("Logistics") ? "checked" : "" %>>
+        <label class="form-check-label" for="depLogistics">Logistics</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="departmentsWorked" id="depFB" value="F&B" <%= deps.includes("F&B") ? "checked" : "" %>>
+        <label class="form-check-label" for="depFB">F&amp;B</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="departmentsWorked" id="depOverall" value="Overall Management" <%= deps.includes("Overall Management") ? "checked" : "" %>>
+        <label class="form-check-label" for="depOverall">Overall Management</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="departmentsWorked" id="depRitual" value="Ritual" <%= deps.includes("Ritual") ? "checked" : "" %>>
+        <label class="form-check-label" for="depRitual">Ritual</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="departmentsWorked" id="depArtist" value="Artist Coordination" <%= deps.includes("Artist Coordination") ? "checked" : "" %>>
+        <label class="form-check-label" for="depArtist">Artist Coordination</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="departmentsWorked" id="depClient" value="Client Handling" <%= deps.includes("Client Handling") ? "checked" : "" %>>
+        <label class="form-check-label" for="depClient">Client Handling</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="departmentsWorked" id="depDecor" value="Decor" <%= deps.includes("Decor") ? "checked" : "" %>>
+        <label class="form-check-label" for="depDecor">Decor</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="departmentsWorked" id="depPhotography" value="Photography" <%= deps.includes("Photography") ? "checked" : "" %>>
+        <label class="form-check-label" for="depPhotography">Photography</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="departmentsWorked" id="depOthers" value="Others" <%= deps.includes("Others") ? "checked" : "" %>>
+        <label class="form-check-label" for="depOthers">Others</label>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Department You Are Best At</label>
+      <select class="form-select" name="bestDepartment">
+        <option value="">Select</option>
+        <option <%= managementProfile.bestDepartment === "Shadow" ? "selected" : "" %>>Shadow</option>
+        <option <%= managementProfile.bestDepartment === "Hospitality" ? "selected" : "" %>>Hospitality</option>
+        <option <%= managementProfile.bestDepartment === "Production" ? "selected" : "" %>>Production</option>
+        <option <%= managementProfile.bestDepartment === "Show Flow" ? "selected" : "" %>>Show Flow</option>
+        <option <%= managementProfile.bestDepartment === "Logistics" ? "selected" : "" %>>Logistics</option>
+        <option <%= managementProfile.bestDepartment === "F&B" ? "selected" : "" %>>F&amp;B</option>
+        <option <%= managementProfile.bestDepartment === "Overall Management" ? "selected" : "" %>>Overall Management</option>
+        <option <%= managementProfile.bestDepartment === "Ritual" ? "selected" : "" %>>Ritual</option>
+        <option <%= managementProfile.bestDepartment === "Artist Coordination" ? "selected" : "" %>>Artist Coordination</option>
+        <option <%= managementProfile.bestDepartment === "Client Handling" ? "selected" : "" %>>Client Handling</option>
+        <option <%= managementProfile.bestDepartment === "Decor" ? "selected" : "" %>>Decor</option>
+        <option <%= managementProfile.bestDepartment === "Photography" ? "selected" : "" %>>Photography</option>
+        <option <%= managementProfile.bestDepartment === "Others" ? "selected" : "" %>>Others</option>
+      </select>
+    </div>
+    
+    <!-- 6. Skills -->
+    <% const skills = managementProfile.skills || []; %>
+    <div class="mb-3">
+      <label class="form-label d-block">Skill Highlights:</label>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="skills" id="skillTeam" value="Team Leadership" <%= skills.includes("Team Leadership") ? "checked" : "" %>>
+        <label class="form-check-label" for="skillTeam">Team Leadership</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="skills" id="skillEvent" value="Event Execution" <%= skills.includes("Event Execution") ? "checked" : "" %>>
+        <label class="form-check-label" for="skillEvent">Event Execution</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="skills" id="skillStage" value="Stage Management" <%= skills.includes("Stage Management") ? "checked" : "" %>>
+        <label class="form-check-label" for="skillStage">Stage Management</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="skills" id="skillClient" value="Client Engagement" <%= skills.includes("Client Engagement") ? "checked" : "" %>>
+        <label class="form-check-label" for="skillClient">Client Engagement</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="skills" id="skillGround" value="Ground Supervision" <%= skills.includes("Ground Supervision") ? "checked" : "" %>>
+        <label class="form-check-label" for="skillGround">Ground Supervision</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="skills" id="skillCoordination" value="Coordination" <%= skills.includes("Coordination") ? "checked" : "" %>>
+        <label class="form-check-label" for="skillCoordination">Coordination</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="skills" id="skillProduction" value="Production Planning" <%= skills.includes("Production Planning") ? "checked" : "" %>>
+        <label class="form-check-label" for="skillProduction">Production Planning</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="skills" id="skillVendor" value="Vendor Handling" <%= skills.includes("Vendor Handling") ? "checked" : "" %>>
+        <label class="form-check-label" for="skillVendor">Vendor Handling</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="skills" id="skillProblem" value="Problem Solving" <%= skills.includes("Problem Solving") ? "checked" : "" %>>
+        <label class="form-check-label" for="skillProblem">Problem Solving</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="skills" id="skillTime" value="Time Management" <%= skills.includes("Time Management") ? "checked" : "" %>>
+        <label class="form-check-label" for="skillTime">Time Management</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="skills" id="skillCommunication" value="Communication" <%= skills.includes("Communication") ? "checked" : "" %>>
+        <label class="form-check-label" for="skillCommunication">Communication</label>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Describe Your Working Style / Signature Approach</label>
+      <textarea class="form-control" name="workingStyle"><%= managementProfile.workingStyle %></textarea>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Instagram Profile Link</label>
+      <input type="url" class="form-control" name="instagram" value="<%= managementProfile.instagram %>">
+    </div>
+    <div class="form-check mb-2">
+      <input class="form-check-input" type="checkbox" name="agreeContact" id="agreeContact" <%= managementProfile.agreeContact ? "checked" : "" %> required>
+      <label class="form-check-label" for="agreeContact">
+        I Agree to Be Contacted for Management Opportunities by VH Events*
+        <a href="/agreement#management-agreement-content">Read Agreement</a>
+      </label>
+    </div>
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" name="confirmTruth" id="confirmTruth" <%= managementProfile.confirmTruth ? "checked" : "" %> required>
+      <label class="form-check-label" for="confirmTruth">
+        I Confirm All the Information Above is True*
+      </label>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+    <a href="/profile" class="btn btn-secondary w-100 mt-2">Cancel</a>
+  </form>
+</div>
+
+<script>
+  // Replace with the actual user email from server
+  const currentUserEmail = "<%= currentUser.email %>";
+
+  document.getElementById('email').addEventListener('input', function() {
+    const enteredEmail = this.value.trim();
+    const errorDiv = document.getElementById('emailError');
+    if (enteredEmail && enteredEmail !== currentUserEmail) {
+      errorDiv.textContent = "Email must match your account email.";
+      errorDiv.style.display = "block";
+    } else {
+      errorDiv.textContent = "";
+      errorDiv.style.display = "none";
+    }
+  });
+
+  document.querySelector('form').addEventListener('submit', function(e) {
+    const enteredEmail = document.getElementById('email').value.trim();
+    if (enteredEmail !== currentUserEmail) {
+      e.preventDefault();
+      document.getElementById('emailError').textContent = "Email must match your account email.";
+      document.getElementById('emailError').style.display = "block";
+    }
+  });
+</script>

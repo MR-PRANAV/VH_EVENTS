@@ -22,6 +22,11 @@
       <input type="tel" class="form-control" name="mobileNumber" required>
     </div>
     <div class="mb-3">
+      <label for="email" class="form-label">Email*</label>
+      <input type="email" class="form-control" id="email" name="email" required>
+      <div id="emailError" class="text-danger mt-1" style="display:none;"></div>
+    </div>
+    <div class="mb-3">
       <label class="form-label">Age*</label>
       <input type="number" class="form-control" name="age" required>
     </div>
@@ -256,4 +261,31 @@
     <button type="submit" class="btn btn-primary w-100">Submit My Management Profile</button>
   </form>
 </div>
+
+<script>
+  // Replace with the actual user email from server
+  const currentUserEmail = "<%= currentUser.email %>";
+
+  document.getElementById('email').addEventListener('input', function() {
+    const enteredEmail = this.value.trim();
+    const errorDiv = document.getElementById('emailError');
+    if (enteredEmail && enteredEmail !== currentUserEmail) {
+      errorDiv.textContent = "Email must match your account email.";
+      errorDiv.style.display = "block";
+    } else {
+      errorDiv.textContent = "";
+      errorDiv.style.display = "none";
+    }
+  });
+
+  // Optional: Prevent form submit if emails don't match
+  document.querySelector('form').addEventListener('submit', function(e) {
+    const enteredEmail = document.getElementById('email').value.trim();
+    if (enteredEmail !== currentUserEmail) {
+      e.preventDefault();
+      document.getElementById('emailError').textContent = "Email must match your account email.";
+      document.getElementById('emailError').style.display = "block";
+    }
+  });
+</script>
 

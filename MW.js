@@ -1,5 +1,6 @@
 const Booking = require("./models/Booking");
 const User = require("./models/User");
+const ManagementProfile = require('./models/management');
 // Middleware to check if user is logged in
 
 function isLoggedIn(req, res, next) {
@@ -38,4 +39,13 @@ function isAdmin(req, res, next) {
   res.redirect("/");
 }
 
-module.exports = { isLoggedIn, isBookingOwner, isAdmin };
+async function canCreateManagementProfile(req, res, next) {
+  const existing = await ManagementProfile.findOne({ user: req.user._id });
+  if (existing) {
+    req.flash('error', 'You have already created a management profile.');
+    return res.redirect('/profile');
+  }
+  next();
+}
+
+module.exports = { isLoggedIn, isBookingOwner, isAdmin, canCreateManagementProfile };

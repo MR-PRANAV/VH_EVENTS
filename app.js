@@ -14,7 +14,7 @@ const ManagementProfile = require("./models/management");
 if (process.env.NODE_ENV != "production") {
   require("dotenv").config();
 }
-const { isLoggedIn, isBookingOwner, isAdmin } = require("./MW");
+const { isLoggedIn, isBookingOwner, isAdmin, canCreateManagementProfile } = require("./MW");
 
 const newsletterRouter = require("./models/newsletter");
 const Booking = require("./models/Booking");
@@ -102,7 +102,26 @@ app.use((req, res, next) => {
 app.get("/", async (req, res) => {
   // stared media from the database
   const starredMedia = await Media.find({ starred: true }).sort({ uploadedAt: -1 });
-  res.render('home/home.ejs', { starredMedia });
+
+  //find all the management profile hoo has powerhouse true
+  const managementProfiles = await ManagementProfile.find({ powerhouse: true }).populate('user', 'email').sort({ createdAt: -1 });
+
+  //array of best department sequence
+  // this is used to show the best department in following sequence in the powerhouse section of hime page
+  const bestDepartmentsequence = [  'Show Flow','Production', 'Shadow', 'Logistics', 'Hospitality', 'F&B', 'Ritual', 'Artist Coordination' ];
+
+  // sort management profiles by best department sequence
+  managementProfiles.sort((a, b) => {
+    const indexA = bestDepartmentsequence.indexOf(a.bestDepartment);
+    const indexB = bestDepartmentsequence.indexOf(b.bestDepartment);
+    return indexA - indexB;
+  });
+  // console.log("Sorted Management Profiles:", managementProfiles);
+
+
+
+
+  res.render('home/home.ejs', { starredMedia, managementProfiles });
 });
 //get to render home page End
 
@@ -171,10 +190,6 @@ ${TextArea}
   }
 });
 
-
-
-
-
 //get to render PROFILE page Start
 app.get("/profile", isLoggedIn, async (req, res) => {
   const bookings = await Booking.find({ user: req.user._id });
@@ -191,7 +206,11 @@ app.get('/gallery', async (req, res) => {
 });
 
 //get to render management form page Start
-app.get("/management", isLoggedIn, (req, res) => {
+app.get("/management", isLoggedIn, canCreateManagementProfile, (req, res) => {
+
+  // print curent user email
+  // console.log("Current User Email:", req.user.email);
+
   res.render("management/management.ejs");
 });
 //get to render management form page End
@@ -515,7 +534,7 @@ app.get('/admin/managementprofiles', isLoggedIn, isAdmin, async (req, res) => {
 
 // -------------------MANAGEMENT---------------------------------
 
-app.get("/management", isLoggedIn, async (req, res) => {
+app.get("/management", isLoggedIn, canCreateManagementProfile, (req, res) => {
   try {
     res.render("management/management.ejs");
   } catch (e) {
@@ -524,7 +543,7 @@ app.get("/management", isLoggedIn, async (req, res) => {
   }
 });
 
-app.post("/management", isLoggedIn, upload.single('profilePicture'), async (req, res) => {
+app.post("/management", isLoggedIn, canCreateManagementProfile, upload.single('profilePicture'), async (req, res) => {
   try {
     //upload image to Cloudinary
     const result = await cloudinary.uploader.upload(req.file.path, {
@@ -535,6 +554,7 @@ app.post("/management", isLoggedIn, upload.single('profilePicture'), async (req,
     const {
       fullName, 
       mobileNumber, 
+      email,
       age, 
       gender, 
       height, 
@@ -568,6 +588,7 @@ app.post("/management", isLoggedIn, upload.single('profilePicture'), async (req,
       profilePicture: result.secure_url,
       fullName,
       mobileNumber,
+      email,
       age,
       gender,
       height,
@@ -619,9 +640,88 @@ app.delete("/management/:id", isLoggedIn, async (req, res) => {
 app.post('/management/:id/powerhouse', isLoggedIn, isAdmin, async (req, res) => {
   const { id } = req.params;
   const { powerhouse } = req.body;
+  // console.log("Powerhouse status:", powerhouse);
   await ManagementProfile.findByIdAndUpdate(id, { powerhouse: powerhouse === 'true' });
-  req.flash('success', 'Powerhouse status updated!');
+  req.flash('success', `Powerhouse status updated! ${powerhouse === 'true' ? 'Added to Powerhouse' : 'Removed from Powerhouse'}`);
   res.redirect('/admin/managementprofiles');
+});
+
+// /management/<%= managementProfile._id %>/edit
+
+app.get("/management/:id/edit", isLoggedIn, async (req, res) => {
+  try {
+    const managementProfile = await ManagementProfile.findById(req.params.id);
+    if (!managementProfile) {
+      req.flash("error", "Management profile not found.");
+      return res.redirect("/profile");
+    }
+    res.render("management/edit.ejs", { managementProfile });
+  } catch (e) {
+    console.error(e);
+    req.flash("error", "Error fetching management profile for editing.");
+    res.redirect("/profile");
+  }
+});
+
+// /management/<%= managementProfile._id %>?_method=PUT
+app.put("/management/:id", isLoggedIn, upload.single('profilePicture'), async (req, res) => {
+  try {
+    const managementProfile = await ManagementProfile.findById(req.params.id);
+    if (!managementProfile) {
+      req.flash("error", "Management profile not found.");
+      return res.redirect("/profile");
+    }
+
+    // Handle file upload if provided
+    let profilePictureUrl = managementProfile.profilePicture;
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'vh-events/management-profiles',
+      });
+      profilePictureUrl = result.secure_url;
+    }
+
+    // Parse arrays from form data
+    const otherCitiesArr = req.body.otherCities ? req.body.otherCities.split(',').map(s => s.trim()) : [];
+    const languagesArr = Array.isArray(req.body.languages) ? req.body.languages : (req.body.languages ? [req.body.languages] : []);
+    const eventCategoriesArr = Array.isArray(req.body.eventCategories) ? req.body.eventCategories : (req.body.eventCategories ? [req.body.eventCategories] : []);
+    const departmentsWorkedArr = Array.isArray(req.body.departmentsWorked) ? req.body.departmentsWorked : (req.body.departmentsWorked ? [req.body.departmentsWorked] : []);
+    const skillsArr = Array.isArray(req.body.skills) ? req.body.skills : (req.body.skills ? [req.body.skills] : []);
+
+    Object.assign(managementProfile, {
+      profilePicture: profilePictureUrl,
+      fullName: req.body.fullName,
+      mobileNumber: req.body.mobileNumber,
+      email: req.body.email,
+      age: req.body.age,
+      gender: req.body.gender,
+      height: req.body.height,
+      currentCity: req.body.currentCity,
+      otherCities: otherCitiesArr,
+      languages: languagesArr,
+      otherLanguage: req.body.otherLanguage,
+      experienceYears: req.body.experienceYears,
+      eventsWorked: req.body.eventsWorked,
+      eventCategories: eventCategoriesArr,
+      companiesWorkedWith: req.body.companiesWorkedWith,
+      departmentsWorked: departmentsWorkedArr,
+      bestDepartment: req.body.bestDepartment,
+      skills: skillsArr,
+      workingStyle: req.body.workingStyle,
+      instagram: req.body.instagram,
+      agreeContact: req.body.agreeContact === 'on' || req.body.agreeContact === true,
+      confirmTruth: req.body.confirmTruth === 'on' || req.body.confirmTruth === true
+    });
+
+    await managementProfile.save();
+
+    req.flash("success", "Management profile updated successfully!");
+    res.redirect("/profile");
+  } catch (e) {
+    console.error(e);
+    req.flash("error", "Error updating management profile.");
+    res.redirect(`/management/${req.params.id}/edit`);
+  }
 });
 
 app.get("/agreement", (req, res) => {

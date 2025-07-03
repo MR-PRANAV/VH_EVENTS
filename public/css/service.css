@@ -123,7 +123,7 @@
 /* Additional styles for service cards */
 
 .card {
-  border: 2px solid red !important;
+  border: 2px solid rgb(255, 183, 0) !important;
 }
 
 

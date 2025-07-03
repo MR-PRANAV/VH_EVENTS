@@ -1,88 +1,5 @@
 <% layout('/layouts/boilerplate') %>
-<style>
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 22px;
-}
-.gallery-item {
-  position: relative;
-  cursor: pointer;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
-  background: #fff;
-  transition: transform 0.15s;
-}
-.gallery-item:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 18px rgba(0,123,255,0.13);
-}
-/* Increase height for each media item */
-.gallery-item img {
-  width: 100%;
-  height: 320px; /* Increased from 220px */
-  object-fit: cover;
-  aspect-ratio: 16/9;
-  display: block;
-  background: #e8eaf6;
-}
-.gallery-item video {
-  width: 100%;
-  height: 320px; /* Increased from 220px */
-  object-fit: cover;
-  aspect-ratio: 9/16;
-  display: block;
-  background: #e8eaf6;
-}
-@media (max-width: 600px) {
-  .grid-container {
-    grid-template-columns: 1fr;
-  }
-  .gallery-item img,
-  .gallery-item video {
-    height: 220px; /* Increased from 180px */
-  }
-}
-.fullscreen-modal {
-  display: none;
-  position: fixed;
-  z-index: 9999;
-  left: 0; top: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.92);
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-.fullscreen-modal.active {
-  display: flex;
-}
-.close-btn {
-  position: absolute;
-  top: 32px;
-  right: 42px;
-  font-size: 2.5rem;
-  color: #fff;
-  background: none;
-  border: none;
-  cursor: pointer;
-  z-index: 10001;
-  transition: color 0.2s;
-}
-.close-btn:hover {
-  color: #ff5252;
-}
-#fullscreen-content img,
-#fullscreen-content video {
-  max-width: 90vw;
-  max-height: 80vh;
-  border-radius: 12px;
-  box-shadow: 0 6px 32px rgba(0,0,0,0.25);
-  background: #222;
-  margin-top: 32px;
-}
-</style>
+
 <body>
   <main class="main-one">
     <div class="main-container-one">
@@ -152,7 +69,7 @@
     </div>
 
     <!-- end about section -->
-
+ <hr class="hr-line-ntvg" />
     <!-- gallery section start -->
 
     <div class="gallery-section" id="gallery">
@@ -180,6 +97,124 @@
       <div id="fullscreen-content"></div>
     </div>
     <!-- gallery section End -->
+
+    <!--print all the managementProfiles -->
+
+    <hr class="hr-line-ntvg" />
+
+    <section class="testimonials" id="powerhouse"> >
+      <div class="heading text-center">
+        <h2>Meet Our Powerhouse</h2>
+      </div>
+      <div class="container">
+        <div class="row text-center">
+          <div class="col-md-12">
+            <div
+              id="carouselExampleIndicators"
+              class="carousel slide"
+              data-ride="carousel"
+            >
+              <div class="carousel-inner">
+                <!-- Item-1 -->
+                <div class="carousel-item active text-center">
+                  <div class="profile-image-bd">
+                    <img src="/other/img/founders.jpg" alt="Harshal Patil" />
+                  </div>
+                     👑 
+                  <h3>— Harshal Patil </h3>
+                  <p style="color: #f0ad4e;"> The Founder of VH Events - OVERALL IN-CHARGE </p>
+                </div>
+                <!-- Item-2 -->
+                <div class="carousel-item text-center">
+                  <div class="profile-image-bd">
+                    <img src="/other/img/founders.jpg" alt="Harshal Patil" />
+                  </div>
+                     👑 
+                  <h3>— Vansh Rajput</h3>
+                 <p style="color: #f0ad4e;"> 
+                  The Co-Founder of VH Events - OVERALL IN-CHARGE
+                  </p>
+                </div>
+                <!-- Item-3 and more -->
+                <% managementProfiles.forEach(profile  => { %>
+                <div class="carousel-item text-center">
+                  <div class="profile-image-bd">
+                      <% if (profile.email == "pranavpatil020389@gmail.co") { %>
+                    <img src="/other/img/founders.jpg" alt="<%= profile.fullName %>" />                    
+                      <% } else { %>
+                    <img src="<%= profile.profilePicture %>" alt="<%= profile.fullName %>" />
+                      <% } %>
+                  </div>
+                    <% if (profile.email == "pranavpatil020389@gmail.com") { %>
+                      👑 
+                    <% } %>
+                  <h3>— <%= profile.fullName %> </h3>
+                  <p style="color: #f0ad4e;"> 
+                    <%= profile.bestDepartment %>
+                    <% if (profile.email == "pranavpatil020389@gmail.com") { %>
+                      - Overall - Digital Coordinators 
+                    <% } %>
+                  </p>
+                </div>
+                <% }) %>
+              </div>
+              
+
+
+              <style>
+                .profile-image-bd{
+                  width: 200px;
+                  height: 200px;
+                  border-radius: 50%;
+                  overflow: hidden;
+                  margin: 0 auto;
+                }
+                .profile-image-bd img {
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                  position: relative;
+                  /* top: 50%; */
+                }
+              </style>
+
+
+
+
+              <a
+                class="carousel-control-prev control"
+                data-target="#carouselExampleIndicators"
+                role="button"
+                data-slide="prev"
+              >
+                <span class="fa fa-angle-left icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+              </a>
+              <a
+                class="carousel-control-next control"
+                data-target="#carouselExampleIndicators"
+                role="button"
+                data-slide="next"
+              >
+                <span class="fa fa-angle-right icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+
+ <hr class="hr-line-ntvg" />
+
+
+
+
+
+
 
     <!-- why chose us section start -->
     <section class="why-choose-us">
@@ -212,7 +247,7 @@
       </div>
     </section>
     <!-- why chose us section End -->
-
+ <hr class="hr-line-ntvg" />  
     <!-- reviews section start -->
     <!-- S C Link - https://codepen.io/baahubali92/pen/LMBQGe -->
     <section class="testimonials" id="reviews">

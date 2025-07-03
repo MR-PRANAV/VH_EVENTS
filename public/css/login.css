@@ -192,12 +192,12 @@ form .btn input[type="submit"] {
     }
 
     .field input:invalid {
-      border-color: #e60000;
+      border-color: #ff0000;
     }
 
     .field input:focus:invalid {
       outline: none;
-      box-shadow: 0 0 4px #e60000;
+      box-shadow: 0 0 4px #ba0a0a;
     }
 
 

@@ -33,6 +33,7 @@
                     <li><a href="/services">Service</a></li>
                     <li><a href="/gallery">Gallery</a></li>
                     <li><a href="/#reviews">Reviews</a></li>
+                    <li><a href="/#powerhouse">Powerhouse</a></li>
                     <li><a href="/services#management">Management M...</a></li>
                 </ul>
             </div>
@@ -43,23 +44,20 @@
                     <li><a href="/agreement#management-agreement-content">Management Agreement</a></li>
                     <li><a href="/agreement#privacy-policy-agreement-content">Privacy Policy</a></li>
                     <li><a href="/agreement#security-policy-content">Security</a></li>
-
                 </ul>
             </div>
             <div class="footer-col">
-
-                 <div class="icons">
+                <div class="icons">
                     <!-- <i class="fa-brands fa-facebook-f"></i> -->
-
                     <a href="https://wa.me/917066670417" target="_blank">
                         <i class="fa-brands fa-whatsapp" style="color: rgb(34, 255, 0);"></i>
                     </a>
-
-                     <a href="https://www.instagram.com/invites/contact/?igsh=1c90t7sgp6x4z&utm_content=x5sicb3" target="_blank">
+                    <a href="https://www.instagram.com/invites/contact/?igsh=1c90t7sgp6x4z&utm_content=x5sicb3"
+                        target="_blank">
                         <i class="fa-brands fa-instagram" style="color: #5b51d8"></i>
-                     </a>
+                    </a>
                 </div>
-<hr>
+                <hr>
                 <h4>Newsletter</h4>
                 <p>
                     Subscribe to our newsletter for a weekly dose
@@ -72,8 +70,8 @@
                     <button type="submit">SUBSCRIBE</button>
                 </form>
                 <hr>
-                <sup>Developed by @_Mr_Pranav____ 
-                   
+                <sup>Developed by @_Mr_Pranav____
+
                     <a href="https://www.instagram.com/_mr_pranav____/" target="_blank">
                         <i class="fa-brands fa-instagram"></i>
                     </a>
@@ -88,28 +86,24 @@
 
 
     <!-- // Form validation for newsletter subscription Start -->
-<script>
-  document.getElementById("newsletterForm").addEventListener("submit", function (e) {
-    const emailInput = document.getElementById("newsletteremail");
-    const errorDiv = document.getElementById("newsletterError");
-    const emailValue = emailInput.value.trim();
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    <script>
+        document.getElementById("newsletterForm").addEventListener("submit", function (e) {
+            const emailInput = document.getElementById("newsletteremail");
+            const errorDiv = document.getElementById("newsletterError");
+            const emailValue = emailInput.value.trim();
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    errorDiv.textContent = ""; // Clear any previous error
+            errorDiv.textContent = ""; // Clear any previous error
 
-    if (emailValue === "") {
-      e.preventDefault();
-      errorDiv.textContent = "Email is required.";
-    } else if (!emailPattern.test(emailValue)) {
-      e.preventDefault();
-      errorDiv.textContent = "Please enter a valid email address.";
-    }
-  });
-</script>
-<!-- // Form validation for newsletter subscription End -->
+            if (emailValue === "") {
+                e.preventDefault();
+                errorDiv.textContent = "Email is required.";
+            } else if (!emailPattern.test(emailValue)) {
+                e.preventDefault();
+                errorDiv.textContent = "Please enter a valid email address.";
+            }
+        });
+    </script>
+    <!-- // Form validation for newsletter subscription End -->
 
 </body>
-
-
-
-
