@@ -1,340 +1,244 @@
 <% layout('/layouts/boilerplate') %>
 
-  <head>
-    <!-- Bootstrap 5 CDN (if not already included) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  </head>
+<div class="container">
+  <div class="row">
+    <h1>Profile</h1>
+    <p>Name - <%= managementProfile.fullName %></p>
+    <p>Email - <%= currentUser.email %></p>
 
+    <!-- <h6>USER ID: <%= currentUser._id %></h6> -->
 
+    <% if (managementProfile && Object.keys(managementProfile).length > 0 && managementProfile.powerhouse === true) { %>
+      <p>#powerhouse member</p>
+    <% } %>
 
+    <% if (currentUser.isAdmin === true) { %>
+      <p>ADMIN ACCESS: ✅</p>
+      <form action="/admin" method="GET" class="mb-3">
+        <button type="submit" class="btn btn-primary">Go to Admin Dashboard</button>
+      </form>
+      <br><br>
+    <% } %>
 
+    <br><br>
 
-  <body>
-    <div class="container">
-      <div class="row">
-        <h1>Profile</h1>
-        <p>
-          Name - <%= managementProfile.fullName %>
-        </p>
-        <p>Email - <%= currentUser.email %>
-        </p>
+    <% if (managementProfile) { %>
+      <h2>Management Profile</h2>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-        <!-- <h6>USER ID: <%= currentUser._id %></h6> -->
+      <div class="card shadow-lg my-4"
+        style="max-width: 480px; margin: auto; background: #f4f7ff; color: #333; border-radius: 16px;">
+        <style>
+          .profile-m-img {
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            border-radius: 20px 20px 0 0;
+            background: #fff;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            margin: 20px 0px 0px 0px;
+          }
+          .profile-m-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 30%;
+            display: block;
+          }
+        </style>
 
+        <div class="profile-m-img">
+          <img src="<%= managementProfile.profilePicture %>" alt="Profile Picture" crossorigin="anonymous">
+        </div>
 
-        <% if (managementProfile && Object.keys(managementProfile).length> 0 && managementProfile.powerhouse === true) {
-          %>
-          <p>
-            #powerhouse member
+        <div class="card-body p-4">
+          <h5 class="card-title text-primary fw-bold mb-2"><i class="bi bi-person-circle me-1"></i>
+            <%= managementProfile.fullName %> <small class="text-muted">(<%= managementProfile.age %> yrs)</small>
+          </h5>
+          <p class="text-muted mb-3"><i class="bi bi-telephone me-1"></i>
+            <%= managementProfile.mobileNumber %> | <%= managementProfile.gender %>
           </p>
-          <% } %>
-
-
-
-
-            <% if (currentUser.isAdmin===true) { %>
-              <p>ADMIN ACCESS: ✅
-              </p>
-              <form action="/admin" method="GET" class="mb-3">
-                <button type="submit" class="btn btn-primary">Go to Admin Dashboard</button>
-              </form>
-              <br><br>
-              <% } %>
-
-                <br><br>
-
-                <% if (managementProfile) { %>
-                  <h2>Management Profile</h2>
-                  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
-                    rel="stylesheet">
-
-                  <div class="card shadow-lg my-4"
-                    style="max-width: 480px; margin: auto; background: #f4f7ff; color: #333; border-radius: 16px;">
-                    <style>
-                      .profile-m-img {
-                        width: 100%;
-                        height: 400px;
-                        /* Adjust height as needed */
-                        overflow: hidden;
-                        border-radius: 20px 20px 0 0;
-                        background: #fff;
-                        display: flex;
-                        align-items: flex-start;
-                        justify-content: center;
-                        margin: 20px 0px 0px 0px ;
-                      }
-
-                      .profile-m-img img {
-                        width: 100%;
-                        height: 100%;
-                        object-fit: cover;
-                        object-position: center 30%;
-                        display: block;
-                      }
-                    </style>
-
-                    <div class="profile-m-img">
-                      <img src="<%= managementProfile.profilePicture %>" alt="Profile Picture" crossorigin="anonymous">
-                    </div>
-
-                    <div class="card-body p-4">
-                      <h5 class="card-title text-primary fw-bold mb-2"><i class="bi bi-person-circle me-1"></i>
-                        <%= managementProfile.fullName %> <small class="text-muted">(<%= managementProfile.age %>
-                              yrs)</small>
-                      </h5>
-
-                      <p class="text-muted mb-3"><i class="bi bi-telephone me-1"></i>
-                        <%= managementProfile.mobileNumber %> | <%= managementProfile.gender %>
-                      </p>
-                      <p class="text-muted mb-3">
-                        <i class="bi bi-envelope me-1"></i>
-                        <%= managementProfile.email %>
-                      </p>
-                      <hr>
-                      <p><strong>ID:</strong>
-                        <%= managementProfile._id %>
-                      </p>
-                      <!-- <p><strong>User ID:</strong> <%= managementProfile.user %></p> -->
-                      <p><strong>Height:</strong>
-                        <%= managementProfile.height || 'N/A' %>
-                      </p>
-                      <p><strong>Current City:</strong>
-                        <%= managementProfile.currentCity %>
-                      </p>
-                      <p>
-                        <strong>Other Cities:</strong>
-                        <% if (managementProfile.otherCities && managementProfile.otherCities.length) { %>
-                          <%= managementProfile.otherCities.join(', ') %>
-      <% } else { %> N/A <% } %>
-    </p>
-
-    <p>
-      <strong>Languages:</strong><br>
-      <% if (managementProfile.languages && managementProfile.languages.length) { %>
-        <% managementProfile.languages.forEach(lang => { %>
-          <span class="badge bg-secondary me-1 mb-1"><%= lang %></span>
-        <% }) %>
-      <% } %>
-      <% if (managementProfile.otherLanguage) { %>
-        <span class="badge bg-secondary me-1 mb-1"><%= managementProfile.otherLanguage %></span>
-      <% } else if (!managementProfile.languages?.length) { %>
-        N/A
-      <% } %>
-    </p>
-
-    <p><strong>Experience:</strong> <%= managementProfile.experienceYears %> yrs</p>
-    <p><strong>Events Worked:</strong> <%= managementProfile.eventsWorked || ' N/A' %>
-                      </p>
-
-                      <p>
-                        <strong>Event Categories:</strong><br>
-                        <% if (managementProfile.eventCategories && managementProfile.eventCategories.length) { %>
-                          <% managementProfile.eventCategories.forEach(cat=> { %>
-                            <span class="badge bg-info text-dark me-1 mb-1">
-                              <%= cat %>
-                            </span>
-                            <% }) %>
-                              <% } else { %> N/A <% } %>
-                      </p>
-
-                      <p><strong>Companies/Brands:</strong><br>
-                        <%= managementProfile.companiesWorkedWith || 'N/A' %>
-                      </p>
-
-                      <p>
-                        <strong>Departments:</strong><br>
-                        <% if (managementProfile.departmentsWorked && managementProfile.departmentsWorked.length) { %>
-                          <% managementProfile.departmentsWorked.forEach(dep=> { %>
-                            <span class="badge bg-warning text-dark me-1 mb-1">
-                              <%= dep %>
-                            </span>
-                            <% }) %>
-                              <% } else { %> N/A <% } %>
-                      </p>
-
-                      <p><strong>Best Department:</strong>
-                        <%= managementProfile.bestDepartment || 'N/A' %>
-                      </p>
-
-                      <p>
-                        <strong>Skills:</strong><br>
-                        <% if (managementProfile.skills && managementProfile.skills.length) { %>
-                          <% managementProfile.skills.forEach(skill=> { %>
-                            <span class="badge bg-success me-1 mb-1">
-                              <%= skill %>
-                            </span>
-                            <% }) %>
-                              <% } else { %> N/A <% } %>
-                      </p>
-
-                      <p><strong>Working Style:</strong> <em class="text-muted">
-                          <%= managementProfile.workingStyle || 'N/A' %>
-                        </em></p>
-
-                      <p>
-                        
-                        <% if (managementProfile.instagram) { %>
-                          <strong>Instagram:</strong>
-                          <a href="<%= managementProfile.instagram %>" class="text-decoration-none text-primary"
-                            target="_blank">
-                            <i class="bi bi-instagram"></i> Visit Profile
-                          </a>
-                          <% } %>
-                      </p>
-
-                      <br>
-                      <a href="/management/<%= managementProfile._id %>/edit"
-                        class="btn btn-outline-primary w-100 mt-2">
-                        <i class="bi bi-pencil-square"></i> Edit Profile
-                      </a>
-                      <form action="/management/<%= managementProfile._id %>?_method=DELETE" method="POST" class="mt-3"
-                        onsubmit="return confirm('Are you sure you want to delete this profile? This action cannot be undone.');">
-                        <button type="submit" class="btn btn-outline-danger w-100">
-                          <i class="bi bi-trash3"></i> Delete Profile
-                        </button>
-                      </form>
-
-
-                      <br>
-                      <!-- <div class="d-grid gap-2 my-3">
-                    <button id="shareCardBtn" class="btn btn-success">
-                      <i class="bi bi-whatsapp"></i> Share on WhatsApp
-                    </button>
-                  </div> -->
-
-                      <a id="downloadCardImg" style="display:none"></a>
-                    </div>
-                  </div>
-
-
-                  <% } else { %>
-                    <div class="alert alert-warning" role="alert">
-                      No management profile found.
-                      <a href="/management" class="btn btn-success btn-sm">Be a Management Member</a>
-                    </div>
-                    <% } %>
-
-
-
-                      <br><br>
-                      <h2>Your Bookings</h2>
-                      <% if (bookings.length===0) { %>
-                        <p>No bookings yet.</p>
-                        <% } else { %>
-                          <ul>
-                            <% bookings.forEach(function(booking) { %>
-                              <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
-                                rel="stylesheet">
-
-                              <li class="mb-4 list-group-item shadow-sm border-0 rounded-3 p-4"
-                                style="background: #f8faff;">
-                                <h5 class="fw-bold mb-3 text-primary">
-                                  <i class="bi bi-receipt-cutoff me-1"></i> Booking ID: <%= booking._id %>
-                                </h5>
-
-                                <div class="row g-2">
-                                  <div class="col-6"><i class="bi bi-calendar-event me-1"></i><strong> Event
-                                      Type:</strong>
-                                    <%= booking.eventType %>
-                                  </div>
-                                  <div class="col-6"><i class="bi bi-building me-1"></i><strong> Venue Type:</strong>
-                                    <%= booking.venueType %>
-                                  </div>
-                                  <div class="col-12"><i class="bi bi-geo-alt me-1"></i><strong> Venue
-                                      Location:</strong>
-                                    <%= booking.venueLocation %>
-                                  </div>
-                                  <div class="col-6"><i class="bi bi-clock me-1"></i><strong> Consultation
-                                      Date:</strong>
-                                    <%= booking.consultationDate ? booking.consultationDate.toDateString() : "No date"
-                                      %>
-                                  </div>
-                                  <div class="col-6"><i class="bi bi-calendar-check me-1"></i><strong> Booked
-                                      At:</strong>
-                                    <%= booking.createdAt ? booking.createdAt.toDateString() : "N/A" %>
-                                  </div>
-                                </div>
-
-                                <hr class="my-3">
-
-                                <div class="row g-2">
-                                  <div class="col-md-6"><i class="bi bi-person me-1"></i><strong> Name:</strong>
-                                    <%= booking.fullName %>
-                                  </div>
-                                  <div class="col-md-6"><i class="bi bi-envelope me-1"></i><strong> Email:</strong>
-                                    <%= booking.email %>
-                                  </div>
-                                  <div class="col-md-6"><i class="bi bi-phone me-1"></i><strong> Phone:</strong>
-                                    <%= booking.phone %>
-                                  </div>
-                                  <div class="col-md-6"><i class="bi bi-geo me-1"></i><strong> City:</strong>
-                                    <%= booking.city || "N/A" %>
-                                  </div>
-                                  <div class="col-md-12"><i class="bi bi-ui-checks me-1"></i><strong> Special
-                                      Requirements:</strong>
-                                    <%= booking.requirements || "None" %>
-                                  </div>
-                                  <div class="col-md-12"><i class="bi bi-megaphone me-1"></i><strong> Heard
-                                      From:</strong>
-                                    <%= booking.heardFrom || "N/A" %>
-                                  </div>
-                                  <br>
-                                  <div class="col-md-12"><i class="bi bi-chat-left-text me-1"></i><strong> Status Notes
-                                      By Admin:</strong>
-                                    <%= booking.adminNote || "N/A" %>
-                                  </div>
-                                </div>
-
-                                <form action="/booking/<%= booking._id %>?_method=DELETE" method="POST" class="mt-4"
-                                  onsubmit="return confirmCancel();">
-                                  <button type="submit" class="btn btn-outline-danger w-100">
-                                    <i class="bi bi-x-circle"></i> Cancel Booking
-                                  </button>
-                                </form>
-                              </li>
-
-
-
-                              <% }) %>
-                          </ul>
-                          <% } %>
-
-
+          <p class="text-muted mb-3">
+            <i class="bi bi-envelope me-1"></i>
+            <%= managementProfile.email %>
+          </p>
+          <hr>
+          <p><strong>ID:</strong> <%= managementProfile._id %></p>
+          <p><strong>Height:</strong> <%= managementProfile.height || 'N/A' %></p>
+          <p><strong>Current City:</strong> <%= managementProfile.currentCity %></p>
+          <p>
+            <strong>Other Cities:</strong>
+            <% if (managementProfile.otherCities && managementProfile.otherCities.length) { %>
+              <%= managementProfile.otherCities.join(', ') %>
+            <% } else { %> N/A <% } %>
+          </p>
+          <p>
+            <strong>Languages:</strong><br>
+            <% if (managementProfile.languages && managementProfile.languages.length) { %>
+              <% managementProfile.languages.forEach(lang => { %>
+                <span class="badge bg-secondary me-1 mb-1"><%= lang %></span>
+              <% }) %>
+            <% } %>
+            <% if (managementProfile.otherLanguage) { %>
+              <span class="badge bg-secondary me-1 mb-1"><%= managementProfile.otherLanguage %></span>
+            <% } else if (!managementProfile.languages?.length) { %>
+              N/A
+            <% } %>
+          </p>
+          <p><strong>Experience:</strong> <%= managementProfile.experienceYears %> yrs</p>
+          <p><strong>Events Worked:</strong> <%= managementProfile.eventsWorked || ' N/A' %></p>
+          <p>
+            <strong>Event Categories:</strong><br>
+            <% if (managementProfile.eventCategories && managementProfile.eventCategories.length) { %>
+              <% managementProfile.eventCategories.forEach(cat => { %>
+                <span class="badge bg-info text-dark me-1 mb-1"><%= cat %></span>
+              <% }) %>
+            <% } else { %> N/A <% } %>
+          </p>
+          <p><strong>Companies/Brands:</strong><br>
+            <%= managementProfile.companiesWorkedWith || 'N/A' %>
+          </p>
+          <p>
+            <strong>Departments:</strong><br>
+            <% if (managementProfile.departmentsWorked && managementProfile.departmentsWorked.length) { %>
+              <% managementProfile.departmentsWorked.forEach(dep => { %>
+                <span class="badge bg-warning text-dark me-1 mb-1"><%= dep %></span>
+              <% }) %>
+            <% } else { %> N/A <% } %>
+          </p>
+          <p><strong>Best Department:</strong> <%= managementProfile.bestDepartment || 'N/A' %></p>
+          <p>
+            <strong>Skills:</strong><br>
+            <% if (managementProfile.skills && managementProfile.skills.length) { %>
+              <% managementProfile.skills.forEach(skill => { %>
+                <span class="badge bg-success me-1 mb-1"><%= skill %></span>
+              <% }) %>
+            <% } else { %> N/A <% } %>
+          </p>
+          <p><strong>Working Style:</strong> <em class="text-muted"><%= managementProfile.workingStyle || 'N/A' %></em></p>
+          <p>
+            <% if (managementProfile.instagram) { %>
+              <strong>Instagram:</strong>
+              <a href="<%= managementProfile.instagram %>" class="text-decoration-none text-primary" target="_blank">
+                <i class="bi bi-instagram"></i> Visit Profile
+              </a>
+            <% } %>
+          </p>
+          <br>
+          <a href="/management/<%= managementProfile._id %>/edit" class="btn btn-outline-primary w-100 mt-2">
+            <i class="bi bi-pencil-square"></i> Edit Profile
+          </a>
+          <form action="/management/<%= managementProfile._id %>?_method=DELETE" method="POST" class="mt-3"
+            onsubmit="return confirm('Are you sure you want to delete this profile? This action cannot be undone.');">
+            <button type="submit" class="btn btn-outline-danger w-100">
+              <i class="bi bi-trash3"></i> Delete Profile
+            </button>
+          </form>
+          <br>
+          <a id="downloadCardImg" style="display:none"></a>
+        </div>
       </div>
+    <% } else { %>
+      <div class="alert alert-warning" role="alert">
+        No management profile found.
+        <a href="/management" class="btn btn-success btn-sm">Be a Management Member</a>
+      </div>
+    <% } %>
 
-      <script>
-        function confirmCancel() {
-          return confirm("Are you sure you want to cancel this booking?");
-        }
-      </script>
+    <br><br>
+    <h2>Your Bookings</h2>
+    <% if (bookings.length === 0) { %>
+      <p>No bookings yet.</p>
+    <% } else { %>
+      <ul>
+        <% bookings.forEach(function(booking) { %>
+          <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+          <li class="mb-4 list-group-item shadow-sm border-0 rounded-3 p-4" style="background: #f8faff;">
+            <h5 class="fw-bold mb-3 text-primary">
+              <i class="bi bi-receipt-cutoff me-1"></i> Booking ID: <%= booking._id %>
+            </h5>
+            <div class="row g-2">
+              <div class="col-6"><i class="bi bi-calendar-event me-1"></i><strong> Event Type:</strong>
+                <%= booking.eventType %>
+              </div>
+              <div class="col-6"><i class="bi bi-building me-1"></i><strong> Venue Type:</strong>
+                <%= booking.venueType %>
+              </div>
+              <div class="col-12"><i class="bi bi-geo-alt me-1"></i><strong> Venue Location:</strong>
+                <%= booking.venueLocation %>
+              </div>
+              <div class="col-6"><i class="bi bi-clock me-1"></i><strong> Consultation Date:</strong>
+                <%= booking.consultationDate ? booking.consultationDate.toDateString() : "No date" %>
+              </div>
+              <div class="col-6"><i class="bi bi-calendar-check me-1"></i><strong> Booked At:</strong>
+                <%= booking.createdAt ? booking.createdAt.toDateString() : "N/A" %>
+              </div>
+            </div>
+            <hr class="my-3">
+            <div class="row g-2">
+              <div class="col-md-6"><i class="bi bi-person me-1"></i><strong> Name:</strong>
+                <%= booking.fullName %>
+              </div>
+              <div class="col-md-6"><i class="bi bi-envelope me-1"></i><strong> Email:</strong>
+                <%= booking.email %>
+              </div>
+              <div class="col-md-6"><i class="bi bi-phone me-1"></i><strong> Phone:</strong>
+                <%= booking.phone %>
+              </div>
+              <div class="col-md-6"><i class="bi bi-geo me-1"></i><strong> City:</strong>
+                <%= booking.city || "N/A" %>
+              </div>
+              <div class="col-md-12"><i class="bi bi-ui-checks me-1"></i><strong> Special Requirements:</strong>
+                <%= booking.requirements || "None" %>
+              </div>
+              <div class="col-md-12"><i class="bi bi-megaphone me-1"></i><strong> Heard From:</strong>
+                <%= booking.heardFrom || "N/A" %>
+              </div>
+              <br>
+              <div class="col-md-12"><i class="bi bi-chat-left-text me-1"></i><strong> Status Notes By Admin:</strong>
+                <%= booking.adminNote || "N/A" %>
+              </div>
+            </div>
+            <form action="/booking/<%= booking._id %>?_method=DELETE" method="POST" class="mt-4"
+              onsubmit="return confirmCancel();">
+              <button type="submit" class="btn btn-outline-danger w-100">
+                <i class="bi bi-x-circle"></i> Cancel Booking
+              </button>
+            </form>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </div>
 
-
-      <script>
-        function confirmCancel() {
-          return confirm("Are you sure you want to cancel this booking? This action cannot be undone.");
-        }
-      </script>
-      <script>
-        document.getElementById('shareCardBtn').onclick = async function () {
-          const card = document.querySelector('.card.shadow-lg');
-          if (!card) return alert('Card not found!');
-          // Capture card as image
-          html2canvas(card, { useCORS: true }).then(canvas => {
-            // Convert to data URL
-            const imgData = canvas.toDataURL('image/png');
-            // Download the image
-            const downloadLink = document.getElementById('downloadCardImg');
-            downloadLink.href = imgData;
-            downloadLink.download = 'management-profile.png';
-            downloadLink.style.display = 'block';
-            downloadLink.innerText = 'Tap here to download the card image, then share it on WhatsApp!';
-            // Optionally, auto-click to prompt download
-            downloadLink.click();
-            // WhatsApp sharing instructions
-            setTimeout(() => {
-              alert('Image downloaded! Now open WhatsApp and share the image as a photo.');
-            }, 500);
-          });
-        };
-      </script>
-  </body>
+  <script>
+    function confirmCancel() {
+      return confirm("Are you sure you want to cancel this booking? This action cannot be undone.");
+    }
+  </script>
+  <script>
+    document.getElementById('shareCardBtn').onclick = async function () {
+      const card = document.querySelector('.card.shadow-lg');
+      if (!card) return alert('Card not found!');
+      // Capture card as image
+      html2canvas(card, { useCORS: true }).then(canvas => {
+        // Convert to data URL
+        const imgData = canvas.toDataURL('image/png');
+        // Download the image
+        const downloadLink = document.getElementById('downloadCardImg');
+        downloadLink.href = imgData;
+        downloadLink.download = 'management-profile.png';
+        downloadLink.style.display = 'block';
+        downloadLink.innerText = 'Tap here to download the card image, then share it on WhatsApp!';
+        // Optionally, auto-click to prompt download
+        downloadLink.click();
+        // WhatsApp sharing instructions
+        setTimeout(() => {
+          alert('Image downloaded! Now open WhatsApp and share the image as a photo.');
+        }, 500);
+      });
+    };
+  </script>
+</div>
